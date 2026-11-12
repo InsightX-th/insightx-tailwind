@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InsightX Tailwind\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 14:20+0700\n"
+"POT-Creation-Date: 2026-11-12 15:30+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -239,191 +239,216 @@ msgstr ""
 msgid "Inner blocks"
 msgstr ""
 
+#: src/I18n.php:65
+msgid ""
+"InsightX Tailwind — Manage Tailwind CSS for your WordPress site and editor"
+msgstr ""
+
 #. translators: %s: file name
-#: src/I18n.php:65 src/Volume.php:47
+#: src/I18n.php:66 src/Volume.php:47
 #, php-format
 msgid ""
 "Invalid file name: %s (use letters, numbers, dot, dash; must end with .css)"
 msgstr ""
 
-#: src/I18n.php:66
+#: src/I18n.php:67
 msgid "Last build"
 msgstr ""
 
-#: src/I18n.php:67
+#: src/I18n.php:68
 msgid ""
 "Loads the page's real theme CSS, fonts and Customizer settings into the "
 "editor instead of the theme's editor stylesheet, so blocks look the same as "
 "on the site."
 msgstr ""
 
-#: src/I18n.php:68
+#: src/I18n.php:69
 msgid "Needs rebuild"
 msgstr ""
 
-#: src/I18n.php:69
+#: src/I18n.php:70
 msgid "New file"
 msgstr ""
 
-#: src/I18n.php:70
+#: src/I18n.php:71
 msgid "New file name"
 msgstr ""
 
-#: src/I18n.php:71
+#: src/I18n.php:72
 msgid "No CSS generated for these classes."
 msgstr ""
 
-#: src/I18n.php:72
+#: src/I18n.php:73
 msgid "No WindPress CSS files found in uploads/windpress/data/."
 msgstr ""
 
-#: src/I18n.php:73
+#: src/I18n.php:74
 msgid "No attributes yet."
 msgstr ""
 
-#: src/I18n.php:74
+#: src/I18n.php:75
 msgid ""
 "No page CSS files yet. Files not imported by main.css can be attached to "
 "pages."
 msgstr ""
 
-#: src/I18n.php:75
+#: src/I18n.php:76
 msgid "Not built yet"
 msgstr ""
 
-#: src/I18n.php:76
+#: src/I18n.php:77
 msgid "Not imported by main.css and not attached to any page"
 msgstr ""
 
-#: src/I18n.php:77
+#: src/I18n.php:78
 msgid "Not used"
 msgstr ""
 
-#: src/I18n.php:78
+#: src/I18n.php:79
 msgid "Off"
 msgstr ""
 
-#: src/I18n.php:79
+#: src/I18n.php:80
 msgid "Open cache.css"
 msgstr ""
 
-#: src/I18n.php:80
+#: src/I18n.php:81
 msgid ""
 "Opens every published page and lists Tailwind classes that are missing from "
 "the cache."
 msgstr ""
 
-#: src/I18n.php:81
+#: src/I18n.php:82
 msgid "Page CSS"
 msgstr ""
 
-#: src/I18n.php:82
+#: src/I18n.php:83
 #, php-format
 msgid "Page CSS: %s (%s) → %s KB"
 msgstr ""
 
-#: src/I18n.php:83
+#: src/I18n.php:84
 msgid "Plugins to scan"
 msgstr ""
 
-#: src/I18n.php:84
+#: src/I18n.php:85
 msgid "Remove attribute"
 msgstr ""
 
-#: src/I18n.php:85
+#: src/I18n.php:86
 msgid "Reset to default"
 msgstr ""
 
-#: src/I18n.php:86
+#: src/I18n.php:87
 msgid "Save & Build"
 msgstr ""
 
-#: src/I18n.php:87
+#: src/I18n.php:88
 msgid "Saved and rebuilt. Visitors now get the new CSS."
 msgstr ""
 
-#: src/I18n.php:88
+#: src/I18n.php:89
 msgid "Scan sources"
 msgstr ""
 
-#: src/I18n.php:89
+#: src/I18n.php:90
 msgid "Show CSS"
 msgstr ""
 
-#: src/I18n.php:90
+#: src/I18n.php:91
 msgid "Size"
 msgstr ""
 
-#: src/I18n.php:91
+#: src/I18n.php:92
 msgid "Sort classes"
 msgstr ""
 
-#: src/I18n.php:92
+#: src/I18n.php:93
 msgid "Status"
 msgstr ""
 
-#: src/I18n.php:93
+#: src/I18n.php:94
 msgid "Tailwind"
 msgstr ""
 
-#: src/I18n.php:94
-msgid "Tailwind classes"
-msgstr ""
-
 #: src/I18n.php:95
-msgid "Text"
+#, php-format
+msgid "Tailwind CSS %s is available"
 msgstr ""
 
 #: src/I18n.php:96
-msgid "Type a class, e.g. p-4 or md:flex"
+msgid "Tailwind classes"
 msgstr ""
 
 #: src/I18n.php:97
-msgid "Unsaved changes"
+msgid "Text"
 msgstr ""
 
 #: src/I18n.php:98
-msgid "Up to date"
+#, php-format
+msgid ""
+"This plugin includes Tailwind CSS %s. Update InsightX Tailwind when a "
+"compatible release is available."
 msgstr ""
 
 #: src/I18n.php:99
-msgid "Use cb-text-node for plain text without a wrapper."
+msgid "Type a class, e.g. p-4 or md:flex"
 msgstr ""
 
 #: src/I18n.php:100
-msgid "Use the frontend CSS in the editor"
+msgid "Unsaved changes"
 msgstr ""
 
 #: src/I18n.php:101
+msgid "Up to date"
+msgstr ""
+
+#: src/I18n.php:102
+msgid "Use cb-text-node for plain text without a wrapper."
+msgstr ""
+
+#: src/I18n.php:103
+msgid "Use the frontend CSS in the editor"
+msgstr ""
+
+#: src/I18n.php:104
+msgid "User manual"
+msgstr ""
+
+#: src/I18n.php:105
+msgid "View Tailwind releases"
+msgstr ""
+
+#: src/I18n.php:106
 msgid ""
 "Visitors get one static CSS file. Gutenberg saves rebuild it automatically."
 msgstr ""
 
-#: src/I18n.php:102
+#: src/I18n.php:107
 msgid "Visitors won't get Tailwind CSS until you build."
 msgstr ""
 
-#: src/I18n.php:103
+#: src/I18n.php:108
 msgid "entry"
 msgstr ""
 
-#: src/I18n.php:104
+#: src/I18n.php:109
 msgid "new-file.css"
 msgstr ""
 
-#: src/PluginInfo.php:72
+#: src/PluginInfo.php:90
 msgid "More information about InsightX Tailwind"
 msgstr ""
 
-#: src/PluginInfo.php:73
+#: src/PluginInfo.php:91
 msgid "View details"
 msgstr ""
 
-#: src/Rest.php:89 src/Rest.php:142
+#: src/Rest.php:95 src/Rest.php:148
 msgid "CSS exceeds 5 MB."
 msgstr ""
 
-#: src/Rest.php:92 src/Rest.php:145
+#: src/Rest.php:98 src/Rest.php:151
 msgid "Could not write the cache file in uploads/."
 msgstr ""
 

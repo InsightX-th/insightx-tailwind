@@ -6,7 +6,7 @@ namespace InsightX\Tailwind;
 
 final class Plugin
 {
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.1';
 
     public static function boot(): void
     {

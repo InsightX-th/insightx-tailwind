@@ -17,8 +17,9 @@ final class CommonBlock
 
     private const VOID_TAGS = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'];
     /** Never rendered from block attributes: they would execute or restyle the whole page. */
-    private const BLOCKED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'base', 'meta', 'link'];
+    private const BLOCKED_TAGS = ['script', 'style', 'iframe', 'object', 'embed', 'base', 'meta', 'link', 'foreignobject', 'animate', 'animatemotion', 'animatetransform', 'set'];
     private const URL_ATTRS = ['href', 'src', 'action', 'formaction', 'poster', 'xlink:href'];
+    private const BLOCKED_ATTRS = ['srcset', 'imagesrcset', 'attributename', 'from', 'to', 'by', 'values', 'begin', 'end'];
 
     public static function register_hooks(): void
     {
@@ -116,16 +117,32 @@ final class CommonBlock
     /** @param mixed $value */
     private static function is_safe_attribute(string $name, $value): bool
     {
-        if (!preg_match('/^[a-z_:][a-z0-9_.:-]*$/', $name) || strpos($name, 'on') === 0) {
+        if (!preg_match('/^[a-z_:][a-z0-9_.:-]*$/', $name) || strpos($name, 'on') === 0 || in_array($name, self::BLOCKED_ATTRS, true)) {
             return false; // invalid name or inline event handler
         }
         if (!is_scalar($value) || $value === false) {
             return false;
         }
         if (in_array($name, self::URL_ATTRS, true)) {
-            $scheme = strtolower((string) preg_replace('/[\s\x00-\x1f]+/', '', (string) $value));
-            if (preg_match('/^(javascript|vbscript|data):/', $scheme) && !preg_match('/^data:image\//', $scheme)) {
+            $decoded = (string) $value;
+            // esc_attr() preserves existing entities; validate the URL the browser will see.
+            for ($i = 0; $i < 6; $i++) {
+                $next = html_entity_decode($decoded, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if ($next === $decoded) {
+                    break;
+                }
+                $decoded = $next;
+            }
+            if ($i === 6 && html_entity_decode($decoded, ENT_QUOTES | ENT_HTML5, 'UTF-8') !== $decoded) {
                 return false;
+            }
+            $url = strtolower((string) preg_replace('/[\s\x00-\x1f\x7f]+/', '', $decoded));
+            if (preg_match('/^([a-z][a-z0-9+.-]*):/', $url, $matches)) {
+                if (in_array($matches[1], ['http', 'https', 'mailto', 'tel'], true)) {
+                    return true;
+                }
+                return $matches[1] === 'data' && $name === 'src'
+                    && preg_match('#^data:image/(?:png|gif|jpeg|webp|avif);base64,#', $url) === 1;
             }
         }
         return true;

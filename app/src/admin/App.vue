@@ -6,11 +6,17 @@ import { buildCache } from '../build'
 import { classesInHtml, missingClasses } from '../audit'
 import CodeEditor from './CodeEditor.vue'
 import Icon from './Icon.vue'
+import tailwindPackage from 'tailwindcss/package.json'
+import { isNewerTailwindVersion } from '../tailwind-version'
 
-type View = 'files' | 'sources' | 'gutenberg' | 'build'
+type View = 'files' | 'sources' | 'gutenberg' | 'build' | 'manual'
 type Toast = { id: number; kind: 'ok' | 'error'; text: string }
 
 const config = getConfig()
+const bundledTailwindVersion = tailwindPackage.version
+const latestTailwindVersion = ref<string | null>(null)
+const tailwindUpdateAvailable = computed(() => latestTailwindVersion.value !== null
+  && isNewerTailwindVersion(bundledTailwindVersion, latestTailwindVersion.value))
 const files = ref<Files>({ [ENTRY]: DEFAULT_MAIN_CSS, ...config.files })
 const savedFiles = ref<string>(JSON.stringify(files.value))
 const current = ref<string>(ENTRY)
@@ -48,11 +54,12 @@ function fileScope(name: string): { label: string; title: string; kind: 'entry' 
     : { label: __('Not used'), title: __('Not imported by main.css and not attached to any page'), kind: 'unused' }
 }
 const dirty = computed(() => JSON.stringify(files.value) !== savedFiles.value)
-const nav = computed<{ id: View; label: string; icon: 'files' | 'scan' | 'blocks' | 'zap' }[]>(() => [
+const nav = computed<{ id: View; label: string; icon: 'files' | 'scan' | 'blocks' | 'zap' | 'book' }[]>(() => [
   { id: 'files', label: __('CSS files'), icon: 'files' },
   { id: 'sources', label: __('Scan sources'), icon: 'scan' },
   { id: 'gutenberg', label: __('Gutenberg'), icon: 'blocks' },
   { id: 'build', label: __('Build & cache'), icon: 'zap' },
+  { id: 'manual', label: __('User manual'), icon: 'book' },
 ])
 const themeJsonModes = computed<{ id: ThemeJsonMode; title: string; desc: string }[]>(() => [
   { id: 'custom', title: __('Custom colors only'), desc: __('Colors and fonts you define in @theme, e.g. --color-brand.') },
@@ -223,7 +230,12 @@ function onKeydown(e: KeyboardEvent) {
   }
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+  void api<{ latest: string | null }>('tailwind-version')
+    .then((result) => { latestTailwindVersion.value = result.latest })
+    .catch(() => { /* Keep the plugin usable when the registry is unreachable. */ })
+})
 onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 
 // Content changed since the last build (flagged by PHP on save_post): rebuild right away.
@@ -243,7 +255,7 @@ if (stale.value && cache.value) void saveAndBuild()
         </div>
         <div class="ixt-brand-text">
           <strong>InsightX Tailwind</strong>
-          <span>Tailwind CSS 4.3 · v{{ config.version }}</span>
+          <span>Tailwind CSS {{ bundledTailwindVersion }} · v{{ config.version }}</span>
         </div>
       </div>
 
@@ -263,6 +275,12 @@ if (stale.value && cache.value) void saveAndBuild()
           <span v-if="item.id === 'build' && (stale || !cache)" class="ixt-dot is-warn" :title="__('Needs rebuild')" />
         </button>
       </nav>
+
+      <div v-if="tailwindUpdateAvailable" class="ixt-tailwind-update" role="status">
+        <strong>{{ __('Tailwind CSS %s is available', latestTailwindVersion ?? '') }}</strong>
+        <span>{{ __('This plugin includes Tailwind CSS %s. Update InsightX Tailwind when a compatible release is available.', bundledTailwindVersion) }}</span>
+        <a href="https://github.com/tailwindlabs/tailwindcss/releases" target="_blank" rel="noopener noreferrer">{{ __('View Tailwind releases') }} <Icon name="external" /></a>
+      </div>
 
       <div class="ixt-nav-foot">
         <div class="ixt-status" :class="{ 'is-warn': stale || !cache }">
@@ -347,9 +365,16 @@ if (stale.value && cache.value) void saveAndBuild()
     </template>
 
     <!-- Other views -->
-    <main v-else class="ixt-content">
+    <main v-else class="ixt-content" :class="{ 'ixt-manual': view === 'manual' }">
+      <template v-if="view === 'manual'">
+        <header class="ixt-page-head">
+          <h1 class="ixt-manual-title">{{ __('User manual') }} <span v-if="config.version" class="ixt-version-badge">v{{ config.version }}</span></h1>
+          <p>{{ __('InsightX Tailwind — Manage Tailwind CSS for your WordPress site and editor') }}</p>
+        </header>
+        <iframe class="ixt-manual-frame" :src="config.manualUrl" :title="__('User manual')" />
+      </template>
       <!-- Scan sources -->
-      <template v-if="view === 'sources'">
+      <template v-else-if="view === 'sources'">
         <header class="ixt-page-head">
           <h1>{{ __('Scan sources') }}</h1>
           <p>{{ __('Build reads these sources and generates CSS only for classes it finds.') }}</p>

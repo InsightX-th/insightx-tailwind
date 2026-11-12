@@ -27,4 +27,6 @@ it('classifies containers and sanitizes tags', () => {
   expect(isContainer({ tagName: 'cb-text-node' })).toBe(false)
   expect(safeTag('script')).toBe('div')
   expect(safeTag('SVG')).toBe('svg')
+  expect(safeTag('animate')).toBe('div')
+  expect(safeTag('foreignObject')).toBe('div')
 })

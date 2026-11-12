@@ -105,6 +105,7 @@ final class Assets
                 'cache'          => Cache::info(),
                 'hasWindpress'   => is_dir(Volume::windpress_dir()),
                 'version'        => Plugin::VERSION,
+                'manualUrl'      => plugins_url('docs/manual-th.html', INSIGHTX_TAILWIND_FILE),
                 'pageFileOptions' => PageCss::page_files(),
                 'globalFiles'    => PageCss::global_files(),
                 'pageAssignments' => (object) PageCss::assignments(),

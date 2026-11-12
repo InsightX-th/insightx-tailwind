@@ -4,13 +4,15 @@
 
 ดูประวัติการเปลี่ยนแปลงใน [CHANGELOG.md](CHANGELOG.md)
 
+คู่มือภาษาไทยพร้อมภาพหน้าจอ: [เปิดอ่าน HTML](docs/manual-th.html) · [ต้นฉบับ Markdown](docs/manual-th.md)
+
 ## ฟีเจอร์หลัก
 
 - **Utilities ชนะ CSS ธีม:** main.css ค่าเริ่มต้น import utilities แบบไม่อยู่ใน layer และโหลดท้ายสุดของ `<head>`
 - **หลายไฟล์ + CSS เฉพาะหน้า:** ไฟล์ที่ `main.css` import ใช้ทุกหน้า ไฟล์อื่นเลือกเป็นรายหน้าในหน้าแก้ไข
 - **Gutenberg:** live preview, ใช้ CSS ของหน้าเว็บจริงใน editor, แผง Tailwind classes (autocomplete, เรียง class, ดู CSS), Common Block, ส่งสี `@theme` เข้า theme.json
 - **Elementor:** live preview และ autocomplete ในช่อง CSS Classes
-- **สแกนครบ:** เนื้อหา, ไฟล์ธีม, ปลั๊กอินที่เลือก, ACF, Widget/เมนู/ค่าของธีม, Elementor · ปุ่มตรวจหน้าเว็บ
+- **สแกนแหล่งสาธารณะ:** เรื่องและหน้าที่เผยแพร่, ไฟล์ธีม, ปลั๊กอินที่เลือก, เมนูที่เผยแพร่ และ Elementor · ปุ่มตรวจหน้าเว็บ
 - **อัปเดตจาก GitHub Releases** (plugin-update-checker) · ภาษาไทย/อังกฤษ
 
 ## การติดตั้ง
@@ -23,6 +25,15 @@
 > ถ้าเว็บสร้างด้วย Common Block ของ WindPress อย่าปิดปลั๊กอินนี้โดยไม่มีตัวแทน เนื้อหาจะไม่แสดง
 
 ## สำหรับผู้พัฒนา
+
+ค่า ACF และ options ของ Widget/ธีมจะถูกสแกนต่อเมื่อผู้พัฒนาระบุชื่อฟิลด์หรือ option ที่เผยแพร่สู่ CSS สาธารณะได้เท่านั้น ตัวอย่างในโค้ดของเว็บไซต์:
+
+```php
+add_filter('insightx_tailwind_public_scan_meta_keys', static fn() => ['hero_class']);
+add_filter('insightx_tailwind_public_scan_options', static fn() => ['widget_public_styles']);
+```
+
+ให้ระบุเฉพาะค่าที่เผยแพร่ได้ทั้ง option เพราะ CSS ที่ build จะเข้าถึงได้โดยผู้เข้าชมทุกคน
 
 ต้องมี Node.js 22+, pnpm 10 และ PHP 7.4+
 

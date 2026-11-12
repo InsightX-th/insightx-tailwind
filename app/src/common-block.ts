@@ -19,7 +19,7 @@ interface Attrs {
 }
 
 const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'])
-const BLOCKED_TAGS = new Set(['script', 'style', 'iframe', 'object', 'embed', 'base', 'meta', 'link'])
+const BLOCKED_TAGS = new Set(['script', 'style', 'iframe', 'object', 'embed', 'base', 'meta', 'link', 'foreignobject', 'animate', 'animatemotion', 'animatetransform', 'set'])
 /** Attributes that would break selecting/editing inside the canvas. */
 const EDITOR_SKIP = new Set(['inert', 'selected', 'autofocus', 'contenteditable', 'popover'])
 

@@ -131,9 +131,9 @@ final class PluginInfo
 <li><strong>Common Block</strong> — block HTML ทั่วไป ใช้กับเนื้อหาที่สร้างด้วย WindPress ได้ทันที</li>
 <li><strong>theme.json</strong> — สีและฟอนต์จาก @theme ขึ้นใน palette ของ Gutenberg</li>
 </ul>
-<h4>สแกนครบ</h4>
+<h4>สแกนแหล่งสาธารณะ</h4>
 <ul>
-<li>เนื้อหา, ไฟล์ธีม, ปลั๊กอินที่เลือก, ACF, Widget/เมนู/ค่าของธีม และ Elementor</li>
+<li>เรื่องและหน้าที่เผยแพร่, ไฟล์ธีม, ปลั๊กอินที่เลือก, เมนูที่เผยแพร่ และ Elementor; ACF กับค่า Widget/ธีมต้องอนุญาตชื่อข้อมูลก่อน</li>
 <li><strong>ตรวจหน้าเว็บ</strong> — เปิดทุกหน้าที่ publish แล้วบอก class ที่ขาด</li>
 <li>Build ใหม่อัตโนมัติเมื่อบันทึกใน Gutenberg</li>
 </ul>
@@ -175,9 +175,9 @@ HTML,
 <li><strong>Common Block</strong>: a generic HTML element block, compatible with content built with WindPress.</li>
 <li><strong>theme.json</strong>: @theme colors and fonts in the Gutenberg palette.</li>
 </ul>
-<h4>Thorough scanning</h4>
+<h4>Public source scanning</h4>
 <ul>
-<li>Content, theme files, selected plugins, ACF, widgets/menus/theme mods and Elementor.</li>
+<li>Published posts and pages, theme files, selected plugins, published menus and Elementor. ACF fields and widget/theme options require an explicit public allowlist.</li>
 <li><strong>Check pages</strong> opens every published page and lists missing classes.</li>
 <li>Rebuilds automatically after saving in Gutenberg.</li>
 </ul>
@@ -205,6 +205,11 @@ HTML,
     private static function changelog(bool $th): string
     {
         $entries = [
+            '0.1.1' => [
+                'เพิ่มคู่มือภาษาไทยแบบหัวข้อพับได้ในหน้าแอดมิน' => 'Added an accordion-style Thai manual in the admin screen.',
+                'แจ้งเมื่อมี Tailwind CSS เวอร์ชันใหม่กว่าเวอร์ชันที่ปลั๊กอินใช้' => 'Shows a notice when a newer Tailwind CSS release is available.',
+                'เพิ่มการกรอง URL และ SVG ใน Common Block และจำกัดแหล่งสแกนของ CSS สาธารณะ' => 'Hardened Common Block URL and SVG handling, and restricted sources used for public CSS.',
+            ],
             '0.1.0' => [
                 'เวอร์ชันแรก: Tailwind CSS 4.3 compile ใน browser เก็บเป็นไฟล์ CSS ไฟล์เดียว และ utilities ชนะ CSS ของธีม' => 'First release: Tailwind CSS 4.3 compiled in the browser into one static CSS file, with utilities that beat the theme.',
                 'หลายไฟล์ CSS, CSS เฉพาะหน้า และนำเข้าจาก WindPress' => 'Multiple CSS files, per-page CSS and import from WindPress.',

@@ -17,6 +17,12 @@ final class Rest
     {
         $admin = static fn(): bool => current_user_can('manage_options');
 
+        register_rest_route(self::NAMESPACE, '/tailwind-version', [
+            'methods'             => 'GET',
+            'permission_callback' => $admin,
+            'callback'            => static fn() => rest_ensure_response(['latest' => TailwindVersion::latest()]),
+        ]);
+
         register_rest_route(self::NAMESPACE, '/scan', [
             'methods'             => 'GET',
             'permission_callback' => $admin,

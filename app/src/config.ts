@@ -43,6 +43,7 @@ export interface InsightxTailwindConfig {
   version?: string
   /** Volume folder relative to the WordPress root, for display. */
   dataPath?: string
+  manualUrl?: string
   /** English source string => translation (built with __() in PHP). */
   i18n?: Record<string, string>
 }

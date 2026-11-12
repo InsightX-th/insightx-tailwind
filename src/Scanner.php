@@ -17,6 +17,24 @@ final class Scanner
     private const FILE_EXTENSIONS = ['php', 'html', 'js', 'twig', 'json'];
     private const SKIP_DIRS = ['node_modules', 'vendor', '.git', 'dist-dev'];
 
+    /** Only content from publicly viewable post types may contribute to public CSS. */
+    private static function public_post_types(): array
+    {
+        return array_values(array_diff(array_keys(get_post_types(['public' => true, 'show_in_rest' => true])), ['attachment']));
+    }
+
+    /** @return list<string> ACF keys explicitly marked safe to expose through public CSS. */
+    private static function public_meta_keys(): array
+    {
+        $approved = apply_filters('insightx_tailwind_public_scan_meta_keys', []);
+        if (!is_array($approved)) {
+            return [];
+        }
+        $keys = array_filter($approved, static fn($name): bool => is_string($name)
+            && preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,190}$/', $name) === 1);
+        return array_values(array_slice(array_unique($keys), 0, 50));
+    }
+
     /** @return array<string, string> source id => label */
     public static function available_sources(): array
     {
@@ -26,7 +44,7 @@ final class Scanner
             'plugins' => __('Plugin files (choose below)', 'insightx-tailwind'),
             'site'    => __('Widgets, menus and theme settings', 'insightx-tailwind'),
         ];
-        if (class_exists('ACF') || function_exists('acf_get_field')) {
+        if ((class_exists('ACF') || function_exists('acf_get_field')) && self::public_meta_keys() !== []) {
             $sources['acf'] = __('ACF field values', 'insightx-tailwind');
         }
         if (did_action('elementor/loaded') || defined('ELEMENTOR_VERSION')) {
@@ -50,7 +68,7 @@ final class Scanner
             case 'acf':
                 return self::acf($page);
             case 'elementor':
-                return self::meta_rows("meta_key = '_elementor_data'", $page);
+                return self::meta_rows("pm.meta_key = '_elementor_data'", $page);
         }
         return ['contents' => [], 'has_more' => false];
     }
@@ -58,10 +76,14 @@ final class Scanner
     /** @return array{contents: list<string>, has_more: bool} */
     private static function posts(int $page): array
     {
-        $types = array_diff(array_values(get_post_types(['show_in_rest' => true])), ['attachment']);
+        $types = self::public_post_types();
+        if ($types === []) {
+            return ['contents' => [], 'has_more' => false];
+        }
         $query = new \WP_Query([
             'post_type'              => $types,
-            'post_status'            => ['publish', 'future', 'draft', 'pending', 'private'],
+            'post_status'            => 'publish',
+            'has_password'           => false,
             'posts_per_page'         => self::POSTS_PER_PAGE,
             'paged'                  => $page,
             'orderby'                => 'ID',
@@ -81,9 +103,10 @@ final class Scanner
     }
 
     /**
-     * Content that lives outside posts: block/classic widgets (footer, sidebars),
-     * menu item CSS classes, and theme mods (Customizer / Kirki).
-     * ponytail: single page; page it like meta_rows() if a site has thousands of widgets.
+     * Published menu classes and explicitly approved public widget/theme options.
+     * Site owners may add known-public option names with the
+     * insightx_tailwind_public_scan_options filter. Reading every widget/theme
+     * option could expose unpublished content through generated CSS.
      *
      * @return array{contents: list<string>, has_more: bool}
      */
@@ -93,39 +116,55 @@ final class Scanner
         if ($page > 1) {
             return ['contents' => [], 'has_more' => false];
         }
-        $options = $wpdb->get_col(
-            "SELECT option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%' OR option_name LIKE 'theme\\_mods\\_%'"
-        );
-        $menus = $wpdb->get_col("SELECT meta_value FROM {$wpdb->postmeta} WHERE meta_key = '_menu_item_classes'");
+        $options = [];
+        $approved = apply_filters('insightx_tailwind_public_scan_options', []);
+        if (is_array($approved)) {
+            $approved = array_filter($approved, static fn($name): bool => is_string($name)
+                && preg_match('/^(widget_[a-z0-9_-]+|theme_mods_[a-z0-9_-]+)$/', $name) === 1);
+            foreach (array_slice(array_unique($approved), 0, 50) as $name) {
+                $value = get_option($name, null);
+                if ($value !== null) {
+                    $options[] = maybe_serialize($value);
+                }
+            }
+        }
+        $menus = $wpdb->get_col("SELECT pm.meta_value FROM {$wpdb->postmeta} pm INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id WHERE pm.meta_key = '_menu_item_classes' AND p.post_status = 'publish'");
         return ['contents' => array_map('strval', array_merge($options, $menus)), 'has_more' => false];
     }
 
     /** @return array{contents: list<string>, has_more: bool} */
     private static function acf(int $page): array
     {
-        global $wpdb;
-        // Public meta values (ACF stores field values unprefixed) + ACF options pages on page 1.
-        $result = self::meta_rows("meta_key NOT LIKE '\\_%' AND meta_value <> ''", $page);
-        if ($page === 1) {
-            $options = $wpdb->get_col("SELECT option_value FROM {$wpdb->options} WHERE option_name LIKE 'options\\_%'");
-            $result['contents'] = array_merge($result['contents'], array_map('strval', $options));
+        $keys = self::public_meta_keys();
+        if ($keys === []) {
+            return ['contents' => [], 'has_more' => false];
         }
-        return $result;
+        $placeholders = implode(', ', array_fill(0, count($keys), '%s'));
+        return self::meta_rows("pm.meta_key IN ({$placeholders}) AND pm.meta_value <> ''", $page, $keys);
     }
 
     /**
-     * @param string $where trusted SQL fragment (constants only, never user input)
+     * @param string $where trusted SQL fragment (constants and placeholders only)
+     * @param list<string> $where_args values for placeholders in $where
      * @return array{contents: list<string>, has_more: bool}
      */
-    private static function meta_rows(string $where, int $page): array
+    private static function meta_rows(string $where, int $page, array $where_args = []): array
     {
         global $wpdb;
+        $types = self::public_post_types();
+        if ($types === []) {
+            return ['contents' => [], 'has_more' => false];
+        }
         $offset = ($page - 1) * self::ROWS_PER_PAGE;
+        $type_placeholders = implode(', ', array_fill(0, count($types), '%s'));
         $rows = $wpdb->get_col($wpdb->prepare(
             // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is a constant fragment
-            "SELECT meta_value FROM {$wpdb->postmeta} WHERE {$where} ORDER BY meta_id LIMIT %d OFFSET %d",
-            self::ROWS_PER_PAGE + 1,
-            $offset
+            "SELECT pm.meta_value FROM {$wpdb->postmeta} pm
+             INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+             WHERE {$where} AND p.post_status = 'publish' AND p.post_password = ''
+             AND p.post_type IN ({$type_placeholders})
+             ORDER BY pm.meta_id LIMIT %d OFFSET %d",
+            ...array_merge($where_args, $types, [self::ROWS_PER_PAGE + 1, $offset])
         ));
         $has_more = count($rows) > self::ROWS_PER_PAGE;
         return [

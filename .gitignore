@@ -12,6 +12,7 @@ Thumbs.db
 # Build output: compiled by Vite in CI and added to the release zip
 /dist/
 *.zip
+/docs/manual-th.pdf
 
 # Dependencies
 /node_modules/
