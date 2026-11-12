@@ -40,7 +40,10 @@ const tailwindSheets: Record<string, string> = {
 
 export function entryOf(files: Files): string {
   const main = files[ENTRY]
-  return main === undefined || main.trim() === '' ? DEFAULT_MAIN_CSS : main
+  if (main === undefined || main.trim() === '') return DEFAULT_MAIN_CSS
+  // Existing sites may still use Tailwind's one-line import, which puts
+  // utilities in a layer where ordinary theme rules override them.
+  return /@import\s+(["'])tailwindcss\1\s*;/.test(main) ? migrateWindpressMain(main) : main
 }
 
 function optionsFor(files: Files) {

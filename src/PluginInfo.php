@@ -172,6 +172,9 @@ HTML,
     private static function changelog(bool $th): string
     {
         $entries = [
+            '0.1.3' => [
+                'preview ใน Widgets editor ตรงกับหน้าเว็บ และสแกน class จาก Widget ที่ใช้งานอยู่' => 'Widgets editor preview now matches the frontend, and classes in active widgets are scanned.',
+            ],
             '0.1.2' => [
                 'ลบลิงก์ “ดูรายละเอียด” ที่ซ้ำในหน้าปลั๊กอิน' => 'Removed the duplicate View details link on the Plugins screen.',
             ],

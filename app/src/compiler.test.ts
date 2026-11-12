@@ -40,6 +40,13 @@ describe('compiler', () => {
     expect(css).not.toContain('not-a-class')
   })
 
+  it('keeps utilities unlayered for an existing plain tailwindcss import', async () => {
+    const css = (await createCompiler({ 'main.css': '@import "tailwindcss";\n@theme { --color-brand: #123456; }' })).build(['bg-brand'])
+    expect(css).toContain('.bg-brand')
+    expect(css).not.toMatch(/@layer utilities\s*\{/)
+    expect(css).toContain('box-sizing: border-box')
+  })
+
   it('supports the important flag', async () => {
     const css = (
       await createCompiler({ 'main.css': '@import "tailwindcss/theme.css";\n@import "tailwindcss/utilities.css" important;' })
@@ -125,7 +132,7 @@ describe('withImportant', () => {
     expect(css).toMatch(/color:[^;]*!important/)
     // Idempotent, and works with the plain `@import "tailwindcss"` form.
     expect(withImportant(files)['main.css']).toBe(files['main.css'])
-    expect(withImportant({ 'main.css': '@import "tailwindcss";' })['main.css']).toBe('@import "tailwindcss" important;')
+    expect(withImportant({ 'main.css': '@import "tailwindcss";' })['main.css']).toContain('@import "tailwindcss/utilities.css" important;')
   })
 })
 

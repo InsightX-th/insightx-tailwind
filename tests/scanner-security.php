@@ -58,9 +58,20 @@ function apply_filters(string $hook, $value) {
     return $approved_filters[$hook] ?? $value;
 }
 function get_option(string $name, $default = false) {
-    return $name === 'widget_public' ? 'public-widget-token' : '[--ixt-private-marker:dummy_secret_42]';
+    if ($name === 'widget_public') return 'public-widget-token';
+    if ($name === 'widget_block') return [2 => ['content' => '<div class="header-widget-token">Header</div>'], 3 => ['content' => '<div class="inactive-widget-token">Draft</div>']];
+    if ($name === 'widget_custom_html') return [4 => ['content' => '<footer class="footer-widget-token">Footer</footer>']];
+    if ($name === 'widget_secret') return [5 => ['api_key' => '[--ixt-private-marker:dummy_secret_42]', 'css_class' => 'widget-custom-token']];
+    return '[--ixt-private-marker:dummy_secret_42]';
 }
 function maybe_serialize($value): string { return (string) $value; }
+function wp_get_sidebars_widgets(): array {
+    return [
+        'header' => ['block-2', 'secret-5'],
+        'footer' => ['custom_html-4'],
+        'wp_inactive_widgets' => ['block-3'],
+    ];
+}
 
 $wpdb = new DummyDb();
 $approved_filters = [];
@@ -93,6 +104,10 @@ check($wpdb->last_prepare_args[0] === 'public_style', 'ACF meta limited to appro
 $site = Scanner::scan('site', 1);
 check(!str_contains(implode(' ', $site['contents']), 'dummy_secret_42'), 'private widget/theme option stays out of public CSS inputs');
 check(in_array('menu-public-token', $site['contents'], true), 'published menu class still scanned');
+check(str_contains(implode(' ', $site['contents']), 'header-widget-token'), 'active header widget class scanned');
+check(str_contains(implode(' ', $site['contents']), 'footer-widget-token'), 'active footer widget class scanned');
+check(str_contains(implode(' ', $site['contents']), 'widget-custom-token'), 'active widget class setting scanned');
+check(!str_contains(implode(' ', $site['contents']), 'inactive-widget-token'), 'inactive widget omitted');
 $approved_filters['insightx_tailwind_public_scan_options'] = ['widget_public', 'options_secret'];
 $site = Scanner::scan('site', 1);
 check(in_array('public-widget-token', $site['contents'], true), 'approved widget option scanned');

@@ -17,6 +17,17 @@ final class Scanner
     private const FILE_EXTENSIONS = ['php', 'html', 'js', 'twig', 'json'];
     private const SKIP_DIRS = ['node_modules', 'vendor', '.git', 'dist-dev'];
 
+    public static function register_hooks(): void
+    {
+        foreach (['added_option', 'updated_option', 'deleted_option'] as $hook) {
+            add_action($hook, static function (string $name): void {
+                if ($name === 'sidebars_widgets' || strpos($name, 'widget_') === 0) {
+                    Settings::set_stale(true);
+                }
+            }, 10, 1);
+        }
+    }
+
     /** Only content from publicly viewable post types may contribute to public CSS. */
     private static function public_post_types(): array
     {
@@ -103,7 +114,7 @@ final class Scanner
     }
 
     /**
-     * Published menu classes and explicitly approved public widget/theme options.
+     * Active widget content, published menu classes and explicitly approved options.
      * Site owners may add known-public option names with the
      * insightx_tailwind_public_scan_options filter. Reading every widget/theme
      * option could expose unpublished content through generated CSS.
@@ -117,6 +128,35 @@ final class Scanner
             return ['contents' => [], 'has_more' => false];
         }
         $options = [];
+        foreach (wp_get_sidebars_widgets() as $sidebar => $widget_ids) {
+            if ($sidebar === 'wp_inactive_widgets' || strpos($sidebar, 'orphaned_widgets_') === 0 || !is_array($widget_ids)) {
+                continue;
+            }
+            foreach ($widget_ids as $widget_id) {
+                if (!is_string($widget_id) || !preg_match('/^(.+)-([0-9]+)$/', $widget_id, $match)) {
+                    continue;
+                }
+                $instances = get_option('widget_' . $match[1], []);
+                $instance = is_array($instances) ? ($instances[(int) $match[2]] ?? null) : null;
+                if (!is_array($instance)) {
+                    continue;
+                }
+                // Core widget bodies are published when their sidebar is rendered.
+                // Other widget settings may contain credentials, so take only class fields.
+                if (in_array($match[1], ['block', 'custom_html', 'text'], true)) {
+                    $field = $match[1] === 'text' ? 'text' : 'content';
+                    if (is_string($instance[$field] ?? null)) {
+                        $options[] = $instance[$field];
+                    }
+                }
+                foreach ($instance as $key => $value) {
+                    if (is_string($key) && is_string($value)
+                        && preg_match('/^(?:class|className|css_class|css_classes|wrapper_class)$/i', $key)) {
+                        $options[] = $value;
+                    }
+                }
+            }
+        }
         $approved = apply_filters('insightx_tailwind_public_scan_options', []);
         if (is_array($approved)) {
             $approved = array_filter($approved, static fn($name): bool => is_string($name)

@@ -1,13 +1,17 @@
 import { createCompiler, withImportant, withPageFiles, type Compiler, type Files } from './compiler'
 import { getConfig } from './config'
-import { mirrorFrontend } from './mirror'
+import { isWidgetsEditor, mirrorFrontend, mirrorWidgetFrontend, scopeForWidgets } from './mirror'
 
 /**
  * Live compiler: watches every class in `doc` and keeps a <style> with the
  * generated CSS at the very end of <head>. Used in the Gutenberg canvas
  * iframe, the Elementor preview, and the frontend when no cache exists.
  */
-export async function startRuntime(doc: Document = document, files: Files = getConfig().files): Promise<() => void> {
+export async function startRuntime(
+  doc: Document = document,
+  files: Files = getConfig().files,
+  transform: (css: string) => string = (css) => css,
+): Promise<() => void> {
   let compiler: Compiler
   try {
     compiler = await createCompiler(files)
@@ -37,7 +41,7 @@ export async function startRuntime(doc: Document = document, files: Files = getC
       }
     }
     pending = []
-    if (changed) style.textContent = compiler.build([...seen])
+    if (changed) style.textContent = transform(compiler.build([...seen]))
     // Stay last so we win over anything injected after us.
     if (doc.head.lastElementChild !== style) doc.head.append(style)
   }
@@ -74,6 +78,16 @@ function inBlockEditorCanvas(): boolean {
 // Don't import this module from other entries — it starts on load.
 const start = () => {
   const config = getConfig()
+  if (isWidgetsEditor()) {
+    // Widgets editor: blocks live in the admin document, so scope everything to its canvas.
+    void startRuntime(document, config.files, (css) => scopeForWidgets(css))
+    if (config.mirrorFrontend && config.frontUrl) {
+      mirrorWidgetFrontend(document, config.frontUrl).catch((error: unknown) =>
+        console.error('[insightx-tailwind] could not load widget preview styles', error),
+      )
+    }
+    return
+  }
   if (!inBlockEditorCanvas()) {
     void startRuntime(document, config.files)
     return

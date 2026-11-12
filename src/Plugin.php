@@ -6,7 +6,7 @@ namespace InsightX\Tailwind;
 
 final class Plugin
 {
-    public const VERSION = '0.1.2';
+    public const VERSION = '0.1.3';
 
     public static function boot(): void
     {
@@ -14,6 +14,7 @@ final class Plugin
             load_plugin_textdomain('insightx-tailwind', false, dirname(plugin_basename(INSIGHTX_TAILWIND_FILE)) . '/languages');
         });
         Assets::register_hooks();
+        Scanner::register_hooks();
         Frontend::register_hooks();
         Admin::register_hooks();
         Rest::register_hooks();
