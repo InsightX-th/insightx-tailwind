@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       InsightX Tailwind
  * Description:       Tailwind CSS 4.3 for WordPress: utilities that override the theme, live preview in Gutenberg & Elementor, class scanning for theme, plugins, ACF and content.
- * Version:           0.1.1
+ * Version:           0.1.2
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Plugin URI:        https://insightx.in.th/

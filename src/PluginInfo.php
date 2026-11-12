@@ -16,7 +16,6 @@ final class PluginInfo
     public static function register_hooks(): void
     {
         add_filter('plugins_api', [self::class, 'info'], 10, 3);
-        add_filter('plugin_row_meta', [self::class, 'row_meta'], 10, 2);
     }
 
     /**
@@ -69,38 +68,6 @@ final class PluginInfo
             $info->{$key} = $ours[$key];
         }
         return $info;
-    }
-
-    /**
-     * @param array<int, string> $meta
-     * @return array<int, string>
-     */
-    public static function row_meta(array $meta, string $file): array
-    {
-        if ($file !== plugin_basename(INSIGHTX_TAILWIND_FILE)) {
-            return $meta;
-        }
-        $url = add_query_arg(
-            ['tab' => 'plugin-information', 'plugin' => self::SLUG, 'TB_iframe' => 'true', 'width' => 772, 'height' => 788],
-            self_admin_url('plugin-install.php')
-        );
-        $details = sprintf(
-            '<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s" data-title="InsightX Tailwind">%s</a>',
-            esc_url($url),
-            esc_attr__('More information about InsightX Tailwind', 'insightx-tailwind'),
-            esc_html__('View details', 'insightx-tailwind')
-        );
-        // Put "View details" before core's "Visit plugin site" link (the one pointing at Plugin URI).
-        $plugin_uri = get_file_data(INSIGHTX_TAILWIND_FILE, ['uri' => 'Plugin URI'])['uri'];
-        $meta = array_values($meta);
-        foreach ($meta as $i => $item) {
-            if ($plugin_uri !== '' && strpos($item, 'href="' . esc_url($plugin_uri) . '"') !== false) {
-                array_splice($meta, $i, 0, [$details]);
-                return $meta;
-            }
-        }
-        $meta[] = $details;
-        return $meta;
     }
 
     /**
@@ -205,6 +172,9 @@ HTML,
     private static function changelog(bool $th): string
     {
         $entries = [
+            '0.1.2' => [
+                'ลบลิงก์ “ดูรายละเอียด” ที่ซ้ำในหน้าปลั๊กอิน' => 'Removed the duplicate View details link on the Plugins screen.',
+            ],
             '0.1.1' => [
                 'เพิ่มคู่มือภาษาไทยแบบหัวข้อพับได้ในหน้าแอดมิน' => 'Added an accordion-style Thai manual in the admin screen.',
                 'แจ้งเมื่อมี Tailwind CSS เวอร์ชันใหม่กว่าเวอร์ชันที่ปลั๊กอินใช้' => 'Shows a notice when a newer Tailwind CSS release is available.',
