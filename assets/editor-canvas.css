@@ -1,0 +1,42 @@
+/*
+ * Block editor canvas only. A Common Block is a raw HTML element, but the editor
+ * styles every block wrapper (`.wp-block` / `.block-editor-block-list__block`):
+ * classic themes get an 840px max-width, 28px vertical margins and auto side
+ * margins, and every block gets position: relative. Undo that so the theme +
+ * Tailwind lay blocks out like the frontend. Tailwind utilities are !important
+ * in the canvas, so classes like mx-auto / my-4 / relative still win.
+ */
+
+/* Frontend CSS mirrored in (html.ixt-mirror, set by app/src/mirror.ts): the editor
+   layout CSS is gone, so just hand these properties back to the frontend cascade.
+   revert-layer drops the remaining unlayered editor declarations (content.css) and
+   uses the theme/preflight value, or the browser default if there is none. */
+html.ixt-mirror .editor-styles-wrapper .ixt-cb.wp-block {
+  max-width: revert-layer;
+  margin: revert-layer;
+  position: revert-layer;
+}
+
+/* Theme editor styles instead (mirroring off): explicit resets. */
+html:not(.ixt-mirror) :where(.editor-styles-wrapper) .ixt-cb {
+  /* (0,1,0) beats `html :where(.wp-block)` (0,0,1) but loses to theme editor
+     styles like `.editor-styles-wrapper p` (0,1,1). */
+  margin-top: 0;
+  margin-bottom: 0;
+}
+html:not(.ixt-mirror) .editor-styles-wrapper .ixt-cb.wp-block {
+  margin-left: 0;
+  margin-right: 0;
+}
+html:not(.ixt-mirror) .editor-styles-wrapper .ixt-cb.wp-block:not(img, svg, video, picture, canvas, iframe, object),
+html:not(.ixt-mirror) .editor-styles-wrapper .ixt-cb .wp-block:not(img, svg, video, picture, canvas, iframe, object) {
+  max-width: none;
+}
+html:not(.ixt-mirror) .block-editor-block-list__layout .ixt-cb.block-editor-block-list__block {
+  position: static;
+}
+
+/* Keep the selection outline on the selected element itself. */
+.block-editor-block-list__layout .ixt-cb.block-editor-block-list__block.is-selected {
+  position: relative;
+}

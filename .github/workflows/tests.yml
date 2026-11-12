@@ -1,0 +1,90 @@
+name: CI
+
+# PHP 7.4+ compatibility lint, PHP syntax + render self-check on every
+# supported PHP version, and the TypeScript side (typecheck, build, Vitest)
+# on every push to main and every pull request.
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  # PHP 7.4+ compatibility ("Requires PHP" in the plugin header). Only the
+  # PHPCompatibilityWP ruleset, no style rules.
+  lint:
+    name: Lint (PHP 7.4+ compatibility)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+
+      - name: Install PHPCompatibilityWP
+        run: |
+          composer global config --no-interaction allow-plugins.dealerdirect/phpcodesniffer-composer-installer true
+          composer global require --no-interaction --no-progress \
+            squizlabs/php_codesniffer:^3 phpcompatibility/phpcompatibility-wp:^2 dealerdirect/phpcodesniffer-composer-installer
+
+      - name: Check PHP 7.4+ compatibility
+        run: |
+          "$(composer global config bin-dir --absolute --quiet)/phpcs" -p \
+            --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- \
+            --exclude=PHPCompatibility.Extensions.RemovedExtensions \
+            --extensions=php --ignore='*/libs/*,*/vendor/*,*/node_modules/*' .
+
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4' ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+
+      # xargs, not `find -exec … \;`: find exits 0 even when php -l fails.
+      - name: Check PHP syntax
+        run: |
+          find . -type f -name "*.php" -not -path "./libs/*" -not -path "./node_modules/*" -print0 | xargs -0 -n1 php -l
+
+      - name: Common Block render self-check
+        run: php tests/common-block-render.php
+
+  js:
+    name: TypeScript (typecheck, build, tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # `pnpm build` runs vue-tsc (strict) before vite build.
+      - name: Typecheck + build
+        run: pnpm build
+
+      - name: Unit tests
+        run: pnpm test
+
+      # Translations must stay in sync with the strings in the code.
+      - name: Translations up to date
+        run: |
+          sudo apt-get install -y -qq gettext > /dev/null
+          python3 scripts/i18n.py
+          git diff --exit-code -- src/I18n.php || (echo "::error::src/I18n.php is stale: run python3 scripts/i18n.py and commit" && exit 1)

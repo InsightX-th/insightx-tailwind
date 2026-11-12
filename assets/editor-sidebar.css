@@ -1,0 +1,146 @@
+/* InsightX Tailwind — block sidebar panels (editor top window). */
+.ixt-panel {
+  --ixt-accent: #0079ff;
+  --ixt-accent-soft: #e6f2ff;
+  --ixt-ink: #0f172a;
+  --ixt-muted: #64748b;
+  --ixt-line: #e2e8f0;
+  --ixt-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.ixt-panel__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ixt-tag-badge {
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--ixt-accent-soft);
+  color: var(--ixt-accent);
+  font: 600 11px/1.6 var(--ixt-mono);
+}
+.ixt-count {
+  min-width: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--ixt-accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  text-align: center;
+}
+
+.ixt-field + .ixt-field { margin-top: 16px; }
+.ixt-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: uppercase;
+  color: #1e1e1e;
+}
+.ixt-help {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--ixt-muted);
+}
+.ixt-mono input,
+.ixt-mono textarea {
+  font-family: var(--ixt-mono) !important;
+  font-size: 12.5px !important;
+}
+
+/* Attribute rows */
+.ixt-attrs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ixt-attrs__empty {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ixt-muted);
+}
+.ixt-attrs__row {
+  display: grid;
+  grid-template-columns: minmax(92px, 0.9fr) auto minmax(0, 1.3fr) auto;
+  align-items: center;
+  gap: 4px;
+}
+.ixt-attrs__row input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid #949494;
+  border-radius: 2px;
+  font: 12px var(--ixt-mono);
+}
+.ixt-attrs__row input:focus {
+  border-color: var(--wp-admin-theme-color, var(--ixt-accent));
+  box-shadow: 0 0 0 1px var(--wp-admin-theme-color, var(--ixt-accent));
+  outline: none;
+}
+.ixt-attrs__name { color: #9333ea; }
+.ixt-attrs__eq { color: var(--ixt-muted); font-family: var(--ixt-mono); }
+.ixt-attrs__remove.components-button { min-width: 24px; padding: 0; color: var(--ixt-muted); }
+.ixt-attrs__remove.components-button:hover { color: #cc1818; }
+.ixt-attrs__add.components-button { align-self: flex-start; margin-top: 2px; }
+
+/* Class tokens */
+.ixt-panel--classes .components-form-token-field__input-container {
+  padding: 6px;
+  gap: 4px;
+  border-radius: 4px;
+}
+.ixt-panel--classes .components-form-token-field__token {
+  font-family: var(--ixt-mono);
+  font-size: 11.5px;
+  max-width: 100%;
+}
+.ixt-panel--classes .components-form-token-field__token-text,
+.ixt-panel--classes .components-form-token-field__remove-token.components-button {
+  background: var(--ixt-accent-soft);
+  color: #1e40af;
+}
+.ixt-panel--classes .components-form-token-field__token-text {
+  padding: 1px 3px 1px 7px;
+  line-height: 22px;
+  border-radius: 6px 0 0 6px;
+}
+.ixt-panel--classes .components-form-token-field__remove-token.components-button {
+  border-radius: 0 6px 6px 0;
+}
+.ixt-panel--classes .components-form-token-field__token:hover .components-form-token-field__token-text,
+.ixt-panel--classes .components-form-token-field__token:hover .components-form-token-field__remove-token.components-button {
+  background: #dbeafe;
+}
+.ixt-panel--classes .components-form-token-field__suggestion {
+  font-family: var(--ixt-mono);
+  font-size: 12px;
+}
+
+.ixt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.ixt-css-output {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  max-height: 320px;
+  overflow: auto;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #cbd5e1;
+  font: 11px/1.6 var(--ixt-mono);
+  white-space: pre-wrap;
+}
+
+/* Page CSS panel */
+.ixt-page-css__list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.ixt-page-css__list code { padding: 1px 6px; border-radius: 4px; background: #f3e8ff; color: #7e22ce; font: 12px var(--ixt-mono); }

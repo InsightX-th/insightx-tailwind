@@ -1,0 +1,21 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Build output: compiled by Vite in CI and added to the release zip
+/dist/
+*.zip
+
+# Dependencies
+/node_modules/
+
+# Local env / secrets
+.env
+.env.*

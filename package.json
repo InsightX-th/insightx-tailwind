@@ -1,0 +1,24 @@
+{
+  "name": "insightx-tailwind",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vue-tsc --noEmit -p app && vite build",
+    "test": "vitest run",
+    "typecheck": "vue-tsc --noEmit -p app"
+  },
+  "dependencies": {
+    "@codemirror/lang-css": "^6.3.1",
+    "codemirror": "^6.0.2",
+    "tailwindcss": "~4.3.5",
+    "vue": "^3.5.45"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0",
+    "vue-tsc": "^3.3.14"
+  }
+}

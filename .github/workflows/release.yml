@@ -1,0 +1,64 @@
+name: Release
+
+# Runs only when a tag (e.g. v0.5.0) is pushed. The zip is the tag's tracked
+# tree from `git archive` (untracked/gitignored paths are never included and
+# .gitattributes export-ignores dev-only files) plus dist/, which is built here
+# because it is not committed. The update checker in the plugin installs this
+# zip (src/Updater.php), so it must contain everything a site needs to run.
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The tag, the plugin header and Plugin::VERSION must agree, or sites
+      # would see the update forever (or never).
+      - name: Check version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          HEADER="$(sed -n 's/^ \* Version: *//p' insightx-tailwind.php | tr -d '[:space:]')"
+          CONST="$(sed -n "s/.*const VERSION = '\(.*\)';/\1/p" src/Plugin.php)"
+          echo "tag=$TAG header=$HEADER const=$CONST"
+          [ "$TAG" = "$HEADER" ] && [ "$TAG" = "$CONST" ] || { echo "::error::Version mismatch"; exit 1; }
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Build assets
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm test
+
+      - name: Build zip
+        run: |
+          mkdir -p package
+          git archive --format=tar --prefix=insightx-tailwind/ "${GITHUB_REF_NAME}" | tar -x -C package
+          cp -R dist package/insightx-tailwind/dist
+          rm -rf package/insightx-tailwind/dist/.vite
+          (cd package && zip -qr "../insightx-tailwind-${GITHUB_REF_NAME}.zip" insightx-tailwind)
+          unzip -l "insightx-tailwind-${GITHUB_REF_NAME}.zip" | tail -1
+
+      - name: Prepare release notes
+        run: awk '/^\*\*\[?[0-9]/ { if (seen++) exit } { print }' CHANGELOG.md > release-notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: insightx-tailwind-${{ github.ref_name }}.zip
+          name: 'insightx-tailwind ${{ github.ref_name }}'
+          body_path: release-notes.md

@@ -1,0 +1,11 @@
+# Dev-only files kept out of the release zip (git archive). dist/ is not
+# tracked at all: release.yml builds it and adds it to the zip.
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/app export-ignore
+/tests export-ignore
+/scripts export-ignore
+/package.json export-ignore
+/pnpm-lock.yaml export-ignore
+/vite.config.ts export-ignore
