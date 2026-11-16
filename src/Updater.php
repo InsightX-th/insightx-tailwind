@@ -31,5 +31,7 @@ final class Updater
         // The checker answers "View details" itself; keep our banner, icon and copy
         // while its version / download URL come from the latest release.
         $checker->addFilter('pre_inject_info', [PluginInfo::class, 'decorate']);
+        // Icon on the update row (Plugins / Dashboard → Updates); PUC only looks in assets/.
+        $checker->addFilter('pre_inject_update', [PluginInfo::class, 'decorateUpdate']);
     }
 }

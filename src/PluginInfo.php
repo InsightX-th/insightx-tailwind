@@ -71,6 +71,20 @@ final class PluginInfo
     }
 
     /**
+     * Icon next to the update row on Plugins / Dashboard → Updates.
+     *
+     * @param object|null $update \YahnisElsts\PluginUpdateChecker\v5p6\Plugin\Update
+     * @return object|null
+     */
+    public static function decorateUpdate($update)
+    {
+        if (is_object($update)) {
+            $update->icons = ((array) self::info(false, 'plugin_information', (object) ['slug' => self::SLUG]))['icons'];
+        }
+        return $update;
+    }
+
+    /**
      * Long-form copy per language (kept out of the .po file on purpose: it's
      * marketing text, not UI strings).
      *
@@ -172,6 +186,9 @@ HTML,
     private static function changelog(bool $th): string
     {
         $entries = [
+            '0.1.4' => [
+                'ไอคอนปลั๊กอินในรายการอัปเดต และไอคอนเมนูแอดมินสีขาว' => 'Plugin icon on the update row, and a white admin menu icon.',
+            ],
             '0.1.3' => [
                 'preview ใน Widgets editor ตรงกับหน้าเว็บ และสแกน class จาก Widget ที่ใช้งานอยู่' => 'Widgets editor preview now matches the frontend, and classes in active widgets are scanned.',
             ],

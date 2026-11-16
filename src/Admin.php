@@ -30,8 +30,24 @@ final class Admin
             static function (): void {
                 echo '<div id="insightx-tailwind-app"></div>';
             },
-            'dashicons-art',
+            self::menu_icon(),
             81
+        );
+    }
+
+    /**
+     * White wave mark from assets/branding/icon.svg. Colours live in <style>
+     * because WordPress's svg-painter.js rewrites every fill="" attribute to the
+     * admin scheme colour, which would turn fill="none" into solid shapes.
+     */
+    private static function menu_icon(): string
+    {
+        return 'data:image/svg+xml;base64,' . base64_encode(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">'
+            . '<style>path{fill:none;stroke:#fff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}</style>'
+            . '<path d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.74 1.91 1.35C13.39 10.84 14.53 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.74-1.91-1.35C15.61 7.16 14.47 6 12 6Z"/>'
+            . '<path d="M7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.74 1.91 1.35C8.39 16.84 9.53 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.74-1.91-1.35C10.61 13.16 9.47 12 7 12Z"/>'
+            . '</svg>'
         );
     }
 
