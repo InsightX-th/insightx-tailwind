@@ -22,6 +22,7 @@ interface Window {
     blocks: { registerBlockType: (name: string, settings: Record<string, unknown>) => void }
     blockEditor: {
       InspectorControls: unknown
+      RichText: unknown
       InnerBlocks: { Content: unknown; ButtonBlockAppender: unknown }
       useBlockProps: (props?: Record<string, unknown>) => Record<string, unknown>
       useInnerBlocksProps: (props: Record<string, unknown>, options?: Record<string, unknown>) => Record<string, unknown>

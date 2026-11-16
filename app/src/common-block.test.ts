@@ -12,7 +12,7 @@ vi.stubGlobal('window', {
   insightxTailwind: { files: {}, restUrl: '', nonce: '' },
 })
 
-const { isContainer, reactProps, safeTag } = await import('./common-block')
+const { inlineEditable, isContainer, reactProps, safeTag } = await import('./common-block')
 
 it('maps HTML attributes to React props for the editor preview', () => {
   expect(
@@ -29,4 +29,17 @@ it('classifies containers and sanitizes tags', () => {
   expect(safeTag('SVG')).toBe('svg')
   expect(safeTag('animate')).toBe('div')
   expect(safeTag('foreignObject')).toBe('div')
+})
+
+it('edits on the canvas only when RichText keeps the markup intact', () => {
+  expect(inlineEditable('')).toBe(true)
+  expect(inlineEditable('ออกแบบโดยทีม Agency\n  ราคา 7,990 บาท')).toBe(true)
+  expect(inlineEditable('a <strong>b</strong> <em>c</em><br>d<br />')).toBe(true)
+  expect(inlineEditable('<a href="/x" target="_blank" rel="noopener">link</a>')).toBe(true)
+  expect(inlineEditable('x &amp; y &lt;3')).toBe(true)
+  expect(inlineEditable('<span class="text-blue-500">x</span>')).toBe(false)
+  expect(inlineEditable('<a href="/x" class="btn">x</a>')).toBe(false)
+  expect(inlineEditable('<strong class="font-bold">x</strong>')).toBe(false)
+  expect(inlineEditable('<div>x</div>')).toBe(false)
+  expect(inlineEditable('x <!-- note --> y')).toBe(false)
 })

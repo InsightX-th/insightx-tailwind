@@ -528,3 +528,7 @@ msgstr "เขียนไฟล์ CSS ไม่ได้"
 #~ msgstr ""
 #~ "Tailwind CSS 4.3 สำหรับ WordPress: utilities ที่ชนะ CSS ของธีม, live preview "
 #~ "ใน Gutenberg และ Elementor, สแกน class จากธีม ปลั๊กอิน ACF และเนื้อหา"
+
+#: src/I18n.php
+msgid "Type text…"
+msgstr "พิมพ์ข้อความ…"

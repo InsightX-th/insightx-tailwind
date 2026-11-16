@@ -61,6 +61,34 @@ export function reactProps(attrs: Record<string, string>): Record<string, unknow
   return props
 }
 
+/**
+ * Tags RichText round-trips without loss (its registered formats). Anything
+ * else — a <span class>, an <a class>, a comment — would be dropped on the
+ * first keystroke, so such content stays sidebar-only.
+ */
+const INLINE_TAGS = new Set(['strong', 'em', 'br', 'code', 's', 'sub', 'sup', 'kbd'])
+const LINK_ATTRS = new Set(['href', 'target', 'rel'])
+
+export function inlineEditable(content: string): boolean {
+  if (content.includes('<!--')) return false
+  for (const m of content.matchAll(/<\s*(\/?)\s*([a-zA-Z][\w-]*)([^>]*)>/g)) {
+    const name = (m[2] ?? '').toLowerCase()
+    const rest = (m[3] ?? '').replace(/\/\s*$/, '').trim()
+    if (m[1]) {
+      if (!INLINE_TAGS.has(name) && name !== 'a') return false
+      continue
+    }
+    if (name === 'a') {
+      for (const attr of rest.matchAll(/([^\s=]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"']+))?/g)) {
+        if (!LINK_ATTRS.has((attr[1] ?? '').toLowerCase())) return false
+      }
+      continue
+    }
+    if (!INLINE_TAGS.has(name) || rest !== '') return false
+  }
+  return true
+}
+
 const COMMON_TAGS = [
   'div', 'section', 'article', 'header', 'footer', 'nav', 'main', 'aside',
   'p', 'span', 'a', 'button', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -210,9 +238,22 @@ function Edit({ attributes, setAttributes, isSelected, clientId }: EditProps) {
     ),
   )
 
+  // Text content is typed straight on the canvas (caret, toolbar) when RichText can keep it intact.
+  const content = a.content ?? ''
+  const editOnCanvas = (isTextNode || contentType === 'text') && !a.selfClosing && !VOID_TAGS.has(tag) && inlineEditable(content)
+
   let el: unknown
-  if (a.tagName === 'cb-text-node') {
-    el = h('span', blockProps, a.content ?? '')
+  if (editOnCanvas) {
+    el = h(blockEditor.RichText, {
+      ...blockProps,
+      tagName: isTextNode ? 'span' : tag,
+      value: content,
+      onChange: (v: string) => setAttributes({ content: v }),
+      allowedFormats: ['core/bold', 'core/italic', 'core/link', 'core/code', 'core/strikethrough', 'core/subscript', 'core/superscript', 'core/keyboard'],
+      placeholder: __('Type text…'),
+    })
+  } else if (a.tagName === 'cb-text-node') {
+    el = h('span', blockProps, content)
   } else if (a.selfClosing || VOID_TAGS.has(tag)) {
     el = h(tag, blockProps)
   } else if ((a.contentType ?? 'empty') !== 'empty') {

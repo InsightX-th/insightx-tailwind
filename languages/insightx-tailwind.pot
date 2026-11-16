@@ -487,3 +487,7 @@ msgstr ""
 #: src/Volume.php:67
 msgid "Could not write CSS files."
 msgstr ""
+
+#: src/I18n.php
+msgid "Type text…"
+msgstr ""

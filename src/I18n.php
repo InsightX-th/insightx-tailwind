@@ -97,6 +97,7 @@ final class I18n
             'Text' => __('Text', 'insightx-tailwind'),
             'This plugin includes Tailwind CSS %s. Update InsightX Tailwind when a compatible release is available.' => __('This plugin includes Tailwind CSS %s. Update InsightX Tailwind when a compatible release is available.', 'insightx-tailwind'),
             'Type a class, e.g. p-4 or md:flex' => __('Type a class, e.g. p-4 or md:flex', 'insightx-tailwind'),
+            'Type text…' => __('Type text…', 'insightx-tailwind'),
             'Unsaved changes' => __('Unsaved changes', 'insightx-tailwind'),
             'Up to date' => __('Up to date', 'insightx-tailwind'),
             'Use cb-text-node for plain text without a wrapper.' => __('Use cb-text-node for plain text without a wrapper.', 'insightx-tailwind'),
