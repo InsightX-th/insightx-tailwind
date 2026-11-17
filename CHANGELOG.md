@@ -1,3 +1,7 @@
+**[0.1.6] - 2026-11-17**
+
+- ไอคอน Lucide: เพิ่ม `@plugin "@iconify/tailwind4";` ใน `main.css` แล้วใส่ class `icon-[lucide--<ชื่อ>]` เช่น `icon-[lucide--house]` ได้ทุกที่ที่ใส่ class ได้ (Gutenberg, Common Block, Elementor, ไฟล์ธีม) แสดงใน editor ทันที · ไอคอนใช้สีตัวอักษรและขนาด 1em ปรับด้วย `text-*` และ `size-*` · ดูชื่อไอคอนที่ https://icones.js.org/collection/lucide
+
 **[0.1.5] - 2026-11-16**
 
 - Common Block: ข้อความ (โหมดข้อความ และ `cb-text-node`) พิมพ์แก้บน canvas ได้เลย มีเคอร์เซอร์และแถบจัดรูปแบบ (ตัวหนา ตัวเอียง ลิงก์) ไม่ต้องแก้ใน sidebar

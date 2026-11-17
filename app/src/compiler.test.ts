@@ -68,6 +68,26 @@ describe('compiler', () => {
   })
 })
 
+describe('icons', () => {
+  const files = { 'main.css': DEFAULT_MAIN_CSS + '\n@plugin "@iconify/tailwind4";' }
+
+  it('builds icon-[lucide--name] when main.css opts in', async () => {
+    const css = (await createCompiler(files)).build(['icon-[lucide--house]', 'hover:icon-[lucide--x]', 'icon-[lucide--not-real]', 'icon-[nope--x]'])
+    expect(css).toContain('.icon-\\[lucide--house\\]')
+    expect(css).toContain('.hover\\:icon-\\[lucide--x\\]')
+    expect(css).toContain('mask-image: var(--svg)')
+    expect(css).toContain('background-color: currentColor')
+    expect(css).toContain('url("data:image/svg+xml,')
+    expect(css).not.toContain('not-real')
+    expect(css).not.toContain('nope')
+  })
+
+  it('stays off without the @plugin line and still rejects other plugins', async () => {
+    expect((await createCompiler({})).build(['icon-[lucide--house]'])).not.toContain('lucide')
+    await expect(createCompiler({ 'main.css': '@plugin "daisyui";' })).rejects.toThrow(/not supported/)
+  })
+})
+
 describe('page files', () => {
   const files = {
     'main.css': DEFAULT_MAIN_CSS + '\n@import "./global.css";',

@@ -6,6 +6,10 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   base: './',
+  resolve: {
+    // @iconify/tailwind4 imports these for its file loader, which the browser build never calls.
+    alias: { 'node:fs': '/app/src/node-stub.ts', 'node:url': '/app/src/node-stub.ts' },
+  },
   build: {
     outDir: 'dist',
     emptyOutDir: true,

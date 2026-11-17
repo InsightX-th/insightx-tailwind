@@ -174,6 +174,8 @@
 
 บล็อกชนิดรูปภาพและ tag ที่ไม่มี tag ปิดมีพฤติกรรมต่างจากตัวครอบบล็อก ใช้ `cb-text-node` เมื่อต้องการข้อความล้วนโดยไม่มี tag ครอบ และอย่าปิดปลั๊กอินที่ทำหน้าที่แสดง Common Block โดยไม่มีตัวแทน เพราะเนื้อหาเดิมอาจไม่แสดง
 
+**ไอคอน Lucide:** เพิ่มบรรทัด `@plugin "@iconify/tailwind4";` ใน `main.css` แล้วใส่ class `icon-[lucide--<ชื่อ>]` เช่น `icon-[lucide--house]` กับ element ว่าง (Common Block ที่ HTML tag เป็น `span`) ดูชื่อไอคอนได้ที่ https://icones.js.org/collection/lucide ไอคอนใช้สีตัวอักษรและมีขนาด 1em จึงปรับด้วย class เช่น `text-red-500 size-6` ได้
+
 ## 11. บันทึกและ Build ให้ผู้เข้าชมได้รับ CSS ล่าสุด
 
 ![หน้าสรุปขนาด cache เวลา Build และสถานะ](images/06-build-cache.png)

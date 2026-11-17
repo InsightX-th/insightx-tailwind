@@ -3,6 +3,7 @@ import indexCss from 'tailwindcss/index.css?raw'
 import themeCss from 'tailwindcss/theme.css?raw'
 import preflightCss from 'tailwindcss/preflight.css?raw'
 import utilitiesCss from 'tailwindcss/utilities.css?raw'
+import { ICONS_PLUGIN, loadIconPlugin } from './icons'
 
 /** User CSS files, keyed by flat file name. `main.css` is the entry. */
 export type Files = Record<string, string>
@@ -59,7 +60,8 @@ function optionsFor(files: Files) {
       }
       return { path: name, base, content }
     },
-    async loadModule(id: string): Promise<never> {
+    async loadModule(id: string, base: string) {
+      if (id === ICONS_PLUGIN) return { path: id, base, module: await loadIconPlugin() }
       throw new Error(`insightx-tailwind: @plugin/@config "${id}" is not supported yet`)
     },
   }

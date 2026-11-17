@@ -11,6 +11,7 @@
 - **Utilities ชนะ CSS ธีม:** main.css ค่าเริ่มต้น import utilities แบบไม่อยู่ใน layer และโหลดท้ายสุดของ `<head>`
 - **หลายไฟล์ + CSS เฉพาะหน้า:** ไฟล์ที่ `main.css` import ใช้ทุกหน้า ไฟล์อื่นเลือกเป็นรายหน้าในหน้าแก้ไข
 - **Gutenberg:** live preview, ใช้ CSS ของหน้าเว็บจริงใน editor, แผง Tailwind classes (autocomplete, เรียง class, ดู CSS), Common Block, ส่งสี `@theme` เข้า theme.json
+- **ไอคอน Lucide:** เพิ่ม `@plugin "@iconify/tailwind4";` ใน main.css แล้วใช้ class `icon-[lucide--house]` ([รายชื่อไอคอน](https://icones.js.org/collection/lucide)) ปรับสีและขนาดด้วย `text-*` / `size-*`
 - **Elementor:** live preview และ autocomplete ในช่อง CSS Classes
 - **สแกนแหล่งสาธารณะ:** เรื่องและหน้าที่เผยแพร่, ไฟล์ธีม, ปลั๊กอินที่เลือก, เมนูที่เผยแพร่ และ Elementor · ปุ่มตรวจหน้าเว็บ
 - **อัปเดตจาก GitHub Releases** (plugin-update-checker) · ภาษาไทย/อังกฤษ
