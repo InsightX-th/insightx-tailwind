@@ -82,6 +82,12 @@ describe('icons', () => {
     expect(css).not.toContain('nope')
   })
 
+  it('builds the other bundled sets (streamline-logos, pixel)', async () => {
+    const css = (await createCompiler(files)).build(['icon-[streamline-logos--line-app-logo-solid]', 'icon-[pixel--facebook-round]'])
+    expect(css).toContain('.icon-\\[streamline-logos--line-app-logo-solid\\]')
+    expect(css).toContain('.icon-\\[pixel--facebook-round\\]')
+  })
+
   it('stays off without the @plugin line and still rejects other plugins', async () => {
     expect((await createCompiler({})).build(['icon-[lucide--house]'])).not.toContain('lucide')
     await expect(createCompiler({ 'main.css': '@plugin "daisyui";' })).rejects.toThrow(/not supported/)

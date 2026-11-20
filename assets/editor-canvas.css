@@ -40,3 +40,11 @@ html:not(.ixt-mirror) .block-editor-block-list__layout .ixt-cb.block-editor-bloc
 .block-editor-block-list__layout .ixt-cb.block-editor-block-list__block.is-selected {
   position: relative;
 }
+
+/* Widgets editor: core caps every widget area at 700px, but breakpoints follow the
+   viewport, so a desktop header gets squeezed into a phone-wide box. Use the full
+   editor width so the preview matches the frontend. */
+body.widgets-php .wp-block[data-type="core/widget-area"],
+body.widgets-php .blocks-widgets-container .editor-styles-wrapper {
+  max-width: none;
+}

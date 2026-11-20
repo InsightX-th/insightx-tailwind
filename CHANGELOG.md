@@ -1,3 +1,9 @@
+**[0.1.7] - 2026-11-20**
+
+- Common Block: แปลง Custom HTML เป็นโครงสร้าง Common Block ที่แก้ไขต่อได้ พร้อมรักษา HTML ที่ไม่รองรับไว้
+- เพิ่มตัวเลือก URL และรูปจากคลังสื่อ รวมถึงการตั้งค่าลิงก์และรูปในแผงแก้ไข
+- ปรับการแสดงผลใน Gutenberg, ไอคอน และคำแปลภาษาไทย
+
 **[0.1.6] - 2026-11-17**
 
 - ไอคอน Lucide: เพิ่ม `@plugin "@iconify/tailwind4";` ใน `main.css` แล้วใส่ class `icon-[lucide--<ชื่อ>]` เช่น `icon-[lucide--house]` ได้ทุกที่ที่ใส่ class ได้ (Gutenberg, Common Block, Elementor, ไฟล์ธีม) แสดงใน editor ทันที · ไอคอนใช้สีตัวอักษรและขนาด 1em ปรับด้วย `text-*` และ `size-*` · ดูชื่อไอคอนที่ https://icones.js.org/collection/lucide

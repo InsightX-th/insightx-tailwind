@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest'
 
-// The module registers the block on import; give it a minimal wp global.
+// The module registers the block (and the HTML toolbar listener) on import; give it a minimal wp global.
 vi.stubGlobal('window', {
   wp: {
     blocks: { registerBlockType: vi.fn() },
@@ -11,6 +11,10 @@ vi.stubGlobal('window', {
   },
   insightxTailwind: { files: {}, restUrl: '', nonce: '' },
 })
+// html-io watches the DOM for the editor toolbar; no DOM here.
+vi.stubGlobal('MutationObserver', class { observe() {} })
+vi.stubGlobal('document', { querySelector: () => null, documentElement: {} })
+vi.stubGlobal('requestAnimationFrame', () => 0)
 
 const { inlineEditable, isContainer, reactProps, safeTag } = await import('./common-block')
 

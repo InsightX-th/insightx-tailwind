@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: InsightX Tailwind\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-12 15:30+0700\n"
+"POT-Creation-Date: 2026-11-17 14:59+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,15 +21,15 @@ msgstr ""
 msgid "InsightX Tailwind"
 msgstr ""
 
-#: src/Admin.php:76
+#: src/Admin.php:92
 msgid "Tailwind CSS is out of date: content changed since the last build."
 msgstr ""
 
-#: src/Admin.php:78
+#: src/Admin.php:94
 msgid "Rebuild now"
 msgstr ""
 
-#: src/Admin.php:88
+#: src/Admin.php:104
 msgid "Settings"
 msgstr ""
 
@@ -78,370 +78,478 @@ msgid "Also the full default palette (250+ swatches)."
 msgstr ""
 
 #: src/I18n.php:28
-msgid "Attribute name"
+msgid "Alt text"
 msgstr ""
 
 #: src/I18n.php:29
-msgid "Attribute value"
+msgid "Attribute name"
 msgstr ""
 
 #: src/I18n.php:30
-msgid "Attributes"
+msgid "Attribute value"
 msgstr ""
 
 #: src/I18n.php:31
-msgid "Build & cache"
+msgid "Attributes"
 msgstr ""
 
 #: src/I18n.php:32
-msgid "Build reads these sources and generates CSS only for classes it finds."
+msgid "Build & cache"
 msgstr ""
 
 #: src/I18n.php:33
-msgid "Building…"
+msgid "Build reads these sources and generates CSS only for classes it finds."
 msgstr ""
 
 #: src/I18n.php:34
-msgid "CSS cache"
+msgid "Building…"
 msgstr ""
 
 #: src/I18n.php:35
-msgid "CSS files"
+msgid "CSS cache"
 msgstr ""
 
 #: src/I18n.php:36
-msgid "Check pages"
+msgid "CSS files"
 msgstr ""
 
 #: src/I18n.php:37
+msgid "Cancel"
+msgstr ""
+
+#: src/I18n.php:38
+msgid "Check pages"
+msgstr ""
+
+#: src/I18n.php:39
 #, php-format
 msgid "Checking page %s of %s…"
 msgstr ""
 
-#: src/I18n.php:38
-msgid "Classes"
-msgstr ""
-
-#: src/I18n.php:39
-msgid "Click Save & Build to scan the site and regenerate the CSS."
-msgstr ""
-
 #: src/I18n.php:40
-msgid "Color palette (theme.json)"
+msgid "Choose from Media Library"
 msgstr ""
 
 #: src/I18n.php:41
-msgid "Colors and fonts you define in @theme, e.g. --color-brand."
+msgid "Choose from posts and pages"
 msgstr ""
 
-#: src/I18n.php:42 src/Integration/CommonBlock.php:35
-msgid "Common Block"
+#: src/I18n.php:42
+msgid "Classes"
 msgstr ""
 
 #: src/I18n.php:43
+msgid "Click Save & Build to scan the site and regenerate the CSS."
+msgstr ""
+
+#: src/I18n.php:44
+msgid "Close"
+msgstr ""
+
+#: src/I18n.php:45
+msgid "Color palette (theme.json)"
+msgstr ""
+
+#: src/I18n.php:46
+msgid "Colors and fonts you define in @theme, e.g. --color-brand."
+msgstr ""
+
+#: src/I18n.php:47 src/Integration/CommonBlock.php:36
+msgid "Common Block"
+msgstr ""
+
+#: src/I18n.php:48
 #, php-format
 msgid "Compiled %s tokens → %s KB"
 msgstr ""
 
-#: src/I18n.php:44
+#: src/I18n.php:49
 msgid "Content"
 msgstr ""
 
-#: src/I18n.php:45
+#: src/I18n.php:50
+msgid "Copied"
+msgstr ""
+
+#: src/I18n.php:51
+msgid "Copy HTML"
+msgstr ""
+
+#: src/I18n.php:52
 msgid "Custom colors only"
 msgstr ""
 
-#: src/I18n.php:46
+#: src/I18n.php:53
 #, php-format
 msgid "Delete %s"
 msgstr ""
 
-#: src/I18n.php:47
+#: src/I18n.php:54
 #, php-format
 msgid "Delete %s? Remember to remove its @import from main.css."
 msgstr ""
 
-#: src/I18n.php:48
+#: src/I18n.php:55
+msgid ""
+"Describe the image for screen readers. Leave empty for decorative images."
+msgstr ""
+
+#: src/I18n.php:56
 msgid "Dismiss"
 msgstr ""
 
-#: src/I18n.php:49
+#: src/I18n.php:57
 msgid "Don't touch the theme's palette."
 msgstr ""
 
-#: src/I18n.php:50
+#: src/I18n.php:58
 msgid "Editor preview"
 msgstr ""
 
-#: src/I18n.php:51
+#: src/I18n.php:59
 msgid "Element"
 msgstr ""
 
-#: src/I18n.php:52
+#: src/I18n.php:60
+msgid "Export HTML"
+msgstr ""
+
+#: src/I18n.php:61
 msgid "Files"
 msgstr ""
 
-#: src/I18n.php:53
+#: src/I18n.php:62
 msgid ""
 "Files imported by main.css apply to every page. Save the page, then reload "
 "the editor to preview the change."
 msgstr ""
 
-#: src/I18n.php:54
+#: src/I18n.php:63
 msgid "Gutenberg"
 msgstr ""
 
-#: src/I18n.php:55
+#: src/I18n.php:64
 msgid "HTML"
 msgstr ""
 
-#: src/I18n.php:56
+#: src/I18n.php:65
+msgid ""
+"HTML of the selected blocks, or of the whole page when nothing is selected."
+msgstr ""
+
+#: src/I18n.php:66
 msgid "HTML tag"
 msgstr ""
 
-#: src/I18n.php:57
+#: src/I18n.php:67
+msgid "Height"
+msgstr ""
+
+#: src/I18n.php:68
 msgid "Hide CSS"
 msgstr ""
 
-#: src/I18n.php:58
+#: src/I18n.php:69
+msgid "Image"
+msgstr ""
+
+#: src/I18n.php:70
+msgid "Import"
+msgstr ""
+
+#: src/I18n.php:71
 #, php-format
 msgid ""
 "Import %s files from WindPress? Files with the same name will be replaced."
 msgstr ""
 
-#: src/I18n.php:59
+#: src/I18n.php:72
+msgid "Import HTML"
+msgstr ""
+
+#: src/I18n.php:73
 msgid "Import from WindPress"
 msgstr ""
 
-#: src/I18n.php:60
+#: src/I18n.php:74
 msgid ""
 "Import other files with @import \"./name.css\". Utilities are unlayered by "
 "default so they beat the theme."
 msgstr ""
 
-#: src/I18n.php:61
+#: src/I18n.php:75
 #, php-format
 msgid ""
 "Imported %s files from WindPress. Check main.css, then click Save & Build."
 msgstr ""
 
-#: src/I18n.php:62
+#: src/I18n.php:76
 msgid "Imported by main.css"
 msgstr ""
 
-#: src/I18n.php:63
+#: src/I18n.php:77
 msgid ""
 "In the block editor, select a block and use the \"Tailwind classes\" panel: "
 "autocomplete, sort, and the generated CSS."
 msgstr ""
 
-#: src/I18n.php:64
+#: src/I18n.php:78
 msgid "Inner blocks"
 msgstr ""
 
-#: src/I18n.php:65
+#: src/I18n.php:79
 msgid ""
 "InsightX Tailwind — Manage Tailwind CSS for your WordPress site and editor"
 msgstr ""
 
 #. translators: %s: file name
-#: src/I18n.php:66 src/Volume.php:47
+#: src/I18n.php:80 src/Volume.php:47
 #, php-format
 msgid ""
 "Invalid file name: %s (use letters, numbers, dot, dash; must end with .css)"
 msgstr ""
 
-#: src/I18n.php:67
+#: src/I18n.php:81
 msgid "Last build"
 msgstr ""
 
-#: src/I18n.php:68
+#: src/I18n.php:82
+msgid "Link"
+msgstr ""
+
+#: src/I18n.php:83
 msgid ""
 "Loads the page's real theme CSS, fonts and Customizer settings into the "
 "editor instead of the theme's editor stylesheet, so blocks look the same as "
 "on the site."
 msgstr ""
 
-#: src/I18n.php:69
+#: src/I18n.php:84
 msgid "Needs rebuild"
 msgstr ""
 
-#: src/I18n.php:70
+#: src/I18n.php:85
 msgid "New file"
 msgstr ""
 
-#: src/I18n.php:71
+#: src/I18n.php:86
 msgid "New file name"
 msgstr ""
 
-#: src/I18n.php:72
+#: src/I18n.php:87
 msgid "No CSS generated for these classes."
 msgstr ""
 
-#: src/I18n.php:73
+#: src/I18n.php:88
+msgid "No HTML elements found to import."
+msgstr ""
+
+#: src/I18n.php:89
 msgid "No WindPress CSS files found in uploads/windpress/data/."
 msgstr ""
 
-#: src/I18n.php:74
+#: src/I18n.php:90
 msgid "No attributes yet."
 msgstr ""
 
-#: src/I18n.php:75
+#: src/I18n.php:91
+msgid "No blocks to export."
+msgstr ""
+
+#: src/I18n.php:92
 msgid ""
 "No page CSS files yet. Files not imported by main.css can be attached to "
 "pages."
 msgstr ""
 
-#: src/I18n.php:76
+#: src/I18n.php:93
 msgid "Not built yet"
 msgstr ""
 
-#: src/I18n.php:77
+#: src/I18n.php:94
 msgid "Not imported by main.css and not attached to any page"
 msgstr ""
 
-#: src/I18n.php:78
+#: src/I18n.php:95
 msgid "Not used"
 msgstr ""
 
-#: src/I18n.php:79
+#: src/I18n.php:96
 msgid "Off"
 msgstr ""
 
-#: src/I18n.php:80
+#: src/I18n.php:97
 msgid "Open cache.css"
 msgstr ""
 
-#: src/I18n.php:81
+#: src/I18n.php:98
+msgid "Open in new tab"
+msgstr ""
+
+#: src/I18n.php:99
 msgid ""
 "Opens every published page and lists Tailwind classes that are missing from "
 "the cache."
 msgstr ""
 
-#: src/I18n.php:82
+#: src/I18n.php:100
 msgid "Page CSS"
 msgstr ""
 
-#: src/I18n.php:83
+#: src/I18n.php:101
 #, php-format
 msgid "Page CSS: %s (%s) → %s KB"
 msgstr ""
 
-#: src/I18n.php:84
+#: src/I18n.php:102
+msgid ""
+"Paste HTML. It becomes Common Blocks with the same tags, classes and "
+"attributes; text can be typed on the canvas."
+msgstr ""
+
+#: src/I18n.php:103
 msgid "Plugins to scan"
 msgstr ""
 
-#: src/I18n.php:85
+#: src/I18n.php:104
 msgid "Remove attribute"
 msgstr ""
 
-#: src/I18n.php:86
+#: src/I18n.php:105
+msgid "Remove image"
+msgstr ""
+
+#: src/I18n.php:106
+msgid "Remove link"
+msgstr ""
+
+#: src/I18n.php:107
+msgid "Replace image"
+msgstr ""
+
+#: src/I18n.php:108
 msgid "Reset to default"
 msgstr ""
 
-#: src/I18n.php:87
+#: src/I18n.php:109
 msgid "Save & Build"
 msgstr ""
 
-#: src/I18n.php:88
+#: src/I18n.php:110
 msgid "Saved and rebuilt. Visitors now get the new CSS."
 msgstr ""
 
-#: src/I18n.php:89
+#: src/I18n.php:111
 msgid "Scan sources"
 msgstr ""
 
-#: src/I18n.php:90
+#: src/I18n.php:112
+msgid "Select a block first: the HTML is inserted after it."
+msgstr ""
+
+#: src/I18n.php:113
+msgid "Select image"
+msgstr ""
+
+#: src/I18n.php:114
 msgid "Show CSS"
 msgstr ""
 
-#: src/I18n.php:91
+#: src/I18n.php:115
 msgid "Size"
 msgstr ""
 
-#: src/I18n.php:92
+#: src/I18n.php:116
 msgid "Sort classes"
 msgstr ""
 
-#: src/I18n.php:93
+#: src/I18n.php:117
 msgid "Status"
 msgstr ""
 
-#: src/I18n.php:94
+#: src/I18n.php:118
 msgid "Tailwind"
 msgstr ""
 
-#: src/I18n.php:95
+#: src/I18n.php:119
 #, php-format
 msgid "Tailwind CSS %s is available"
 msgstr ""
 
-#: src/I18n.php:96
+#: src/I18n.php:120
 msgid "Tailwind classes"
 msgstr ""
 
-#: src/I18n.php:97
+#: src/I18n.php:121
 msgid "Text"
 msgstr ""
 
-#: src/I18n.php:98
+#: src/I18n.php:122
+msgid "The block editor is not ready yet."
+msgstr ""
+
+#: src/I18n.php:123
 #, php-format
 msgid ""
 "This plugin includes Tailwind CSS %s. Update InsightX Tailwind when a "
 "compatible release is available."
 msgstr ""
 
-#: src/I18n.php:99
+#: src/I18n.php:124
 msgid "Type a class, e.g. p-4 or md:flex"
 msgstr ""
 
-#: src/I18n.php:100
+#: src/I18n.php:125
+msgid "Type text…"
+msgstr ""
+
+#: src/I18n.php:126
+msgid "URL"
+msgstr ""
+
+#: src/I18n.php:127
 msgid "Unsaved changes"
 msgstr ""
 
-#: src/I18n.php:101
+#: src/I18n.php:128
 msgid "Up to date"
 msgstr ""
 
-#: src/I18n.php:102
+#: src/I18n.php:129
 msgid "Use cb-text-node for plain text without a wrapper."
 msgstr ""
 
-#: src/I18n.php:103
+#: src/I18n.php:130
 msgid "Use the frontend CSS in the editor"
 msgstr ""
 
-#: src/I18n.php:104
+#: src/I18n.php:131
 msgid "User manual"
 msgstr ""
 
-#: src/I18n.php:105
+#: src/I18n.php:132
 msgid "View Tailwind releases"
 msgstr ""
 
-#: src/I18n.php:106
+#: src/I18n.php:133
 msgid ""
 "Visitors get one static CSS file. Gutenberg saves rebuild it automatically."
 msgstr ""
 
-#: src/I18n.php:107
+#: src/I18n.php:134
 msgid "Visitors won't get Tailwind CSS until you build."
 msgstr ""
 
-#: src/I18n.php:108
+#: src/I18n.php:135
+msgid "Width"
+msgstr ""
+
+#: src/I18n.php:136
 msgid "entry"
 msgstr ""
 
-#: src/I18n.php:109
+#: src/I18n.php:137
 msgid "new-file.css"
-msgstr ""
-
-#: src/PluginInfo.php:90
-msgid "More information about InsightX Tailwind"
-msgstr ""
-
-#: src/PluginInfo.php:91
-msgid "View details"
 msgstr ""
 
 #: src/Rest.php:95 src/Rest.php:148
@@ -452,27 +560,27 @@ msgstr ""
 msgid "Could not write the cache file in uploads/."
 msgstr ""
 
-#: src/Scanner.php:24
+#: src/Scanner.php:53
 msgid "Post content (posts, pages, templates, patterns)"
 msgstr ""
 
-#: src/Scanner.php:25
+#: src/Scanner.php:54
 msgid "Theme files (active theme + parent)"
 msgstr ""
 
-#: src/Scanner.php:26
+#: src/Scanner.php:55
 msgid "Plugin files (choose below)"
 msgstr ""
 
-#: src/Scanner.php:27
+#: src/Scanner.php:56
 msgid "Widgets, menus and theme settings"
 msgstr ""
 
-#: src/Scanner.php:30
+#: src/Scanner.php:59
 msgid "ACF field values"
 msgstr ""
 
-#: src/Scanner.php:33
+#: src/Scanner.php:62
 msgid "Elementor data"
 msgstr ""
 
@@ -486,8 +594,4 @@ msgstr ""
 
 #: src/Volume.php:67
 msgid "Could not write CSS files."
-msgstr ""
-
-#: src/I18n.php
-msgid "Type text…"
 msgstr ""

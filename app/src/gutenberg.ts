@@ -3,6 +3,7 @@ import { buildCache } from './build'
 import { createCompiler } from './compiler'
 import { __, getConfig } from './config'
 import { sortClasses } from './sort'
+import { isWidgetsEditor } from './mirror'
 import { registerPageCssPanel } from './page-css-panel'
 
 /**
@@ -97,16 +98,22 @@ hooks.addFilter('editor.BlockEdit', 'insightx-tailwind/panel', withTailwindPanel
 registerPageCssPanel()
 
 // Rebuild the frontend cache after each manual save (admins only; others leave it stale for later).
-// Only the post/page editor has the `core/editor` store; the widgets and site editors don't,
-// and a throwing listener there breaks the whole editor (blank screen).
+// Only the post/page editor has the `core/editor` store and only the Widgets editor has
+// `core/edit-widgets`; the site editor has neither, and a throwing listener there breaks
+// the whole editor (blank screen).
+function isSaving(): boolean {
+  if (isWidgetsEditor()) return data.select('core/edit-widgets')?.isSavingWidgetAreas?.() === true
+  const editor = data.select('core/editor')
+  if (!editor || typeof editor.isSavingPost !== 'function') return false
+  return editor.isSavingPost() && !editor.isAutosavingPost()
+}
+
 if (getConfig().canBuild) {
   let wasSaving = false
   let building = false
   data.subscribe(() => {
     try {
-      const editor = data.select('core/editor')
-      if (!editor || typeof editor.isSavingPost !== 'function') return
-      const saving = editor.isSavingPost() && !editor.isAutosavingPost()
+      const saving = isSaving()
       if (wasSaving && !saving && !building) {
         building = true
         buildCache()

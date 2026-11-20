@@ -85,6 +85,8 @@
   outline: none;
 }
 .ixt-attrs__name { color: #9333ea; }
+.ixt-attrs__value-wrap { display: flex; align-items: center; gap: 2px; min-width: 0; }
+.ixt-attrs__media.components-button { flex-shrink: 0; min-width: 28px; padding: 0 2px; }
 .ixt-attrs__eq { color: var(--ixt-muted); font-family: var(--ixt-mono); }
 .ixt-attrs__remove.components-button { min-width: 24px; padding: 0; color: var(--ixt-muted); }
 .ixt-attrs__remove.components-button:hover { color: #cc1818; }
@@ -144,3 +146,60 @@
 /* Page CSS panel */
 .ixt-page-css__list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
 .ixt-page-css__list code { padding: 1px 6px; border-radius: 4px; background: #f3e8ff; color: #7e22ce; font: 12px var(--ixt-mono); }
+
+/* Import / Export HTML (app/src/html-io.ts): toolbar buttons + modal. */
+.ixt-html-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ixt-html-modal .ixt-mono textarea {
+  min-height: 360px;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+  tab-size: 2;
+}
+.ixt-html-modal__error {
+  margin: 8px 0 0;
+  color: #cc1818;
+}
+.ixt-html-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* Image panel (<img> Common Blocks) */
+.ixt-image-panel__media {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.ixt-image-panel__media .components-button { justify-content: center; }
+.ixt-image-panel__preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: repeating-conic-gradient(#f0f0f0 0 25%, #fff 0 50%) 0 0 / 16px 16px;
+}
+.ixt-image-panel__size {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+/* Link panel (<a> Common Blocks) */
+.ixt-link-panel__fields,
+.ixt-link-panel__picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ixt-link-panel__fields .components-button,
+.ixt-link-panel__picker > .components-button { justify-content: center; }
+.ixt-link-panel__picker .block-editor-link-control { min-width: 0; width: 100%; }

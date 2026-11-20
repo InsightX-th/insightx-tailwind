@@ -1,4 +1,8 @@
 import { __ } from './config'
+import { inlineEditable, nodesToSpecs } from './html-to-blocks'
+import { createBlocks } from './html-io'
+
+export { inlineEditable }
 
 /**
  * Editor side of `windpress/common-block` (attributes + render live in
@@ -61,34 +65,6 @@ export function reactProps(attrs: Record<string, string>): Record<string, unknow
   return props
 }
 
-/**
- * Tags RichText round-trips without loss (its registered formats). Anything
- * else — a <span class>, an <a class>, a comment — would be dropped on the
- * first keystroke, so such content stays sidebar-only.
- */
-const INLINE_TAGS = new Set(['strong', 'em', 'br', 'code', 's', 'sub', 'sup', 'kbd'])
-const LINK_ATTRS = new Set(['href', 'target', 'rel'])
-
-export function inlineEditable(content: string): boolean {
-  if (content.includes('<!--')) return false
-  for (const m of content.matchAll(/<\s*(\/?)\s*([a-zA-Z][\w-]*)([^>]*)>/g)) {
-    const name = (m[2] ?? '').toLowerCase()
-    const rest = (m[3] ?? '').replace(/\/\s*$/, '').trim()
-    if (m[1]) {
-      if (!INLINE_TAGS.has(name) && name !== 'a') return false
-      continue
-    }
-    if (name === 'a') {
-      for (const attr of rest.matchAll(/([^\s=]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"']+))?/g)) {
-        if (!LINK_ATTRS.has((attr[1] ?? '').toLowerCase())) return false
-      }
-      continue
-    }
-    if (!INLINE_TAGS.has(name) || rest !== '') return false
-  }
-  return true
-}
-
 const COMMON_TAGS = [
   'div', 'section', 'article', 'header', 'footer', 'nav', 'main', 'aside',
   'p', 'span', 'a', 'button', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -99,9 +75,158 @@ const COMMON_TAGS = [
 
 type AttrRow = [string, string]
 
-function AttributeRows({ value, onChange }: { value: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
+/** URL attributes that can be picked from the Media Library, and which media types fit each element. */
+const MEDIA_ATTRS = new Set(['src', 'poster'])
+const MEDIA_TYPES: Record<string, string[]> = { img: ['image'], video: ['video'], audio: ['audio'] }
+
+interface MediaItem {
+  url: string
+  alt?: string
+  width?: number
+  height?: number
+}
+
+/** Set (or, with '', drop) one attribute; an empty width="" would render as a bare `width`. */
+function withAttr(attrs: Record<string, string>, name: string, value: string): Record<string, string> {
+  const next = { ...attrs }
+  if (value === '') delete next[name]
+  else next[name] = value
+  return next
+}
+
+const NEW_TAB_REL = ['noopener', 'noreferrer']
+const LinkControl = (blockEditor as unknown as { LinkControl?: unknown; __experimentalLinkControl?: unknown }).LinkControl
+  ?? (blockEditor as unknown as { __experimentalLinkControl?: unknown }).__experimentalLinkControl
+
+/** target="_blank" + rel noopener/noreferrer, keeping any other rel tokens (e.g. nofollow). */
+function withNewTab(attrs: Record<string, string>, on: boolean): Record<string, string> {
+  const rel = (attrs.rel ?? '').split(/\s+/).filter((t) => t !== '' && !NEW_TAB_REL.includes(t))
+  const next = withAttr(attrs, 'target', on ? '_blank' : '')
+  return withAttr(next, 'rel', [...rel, ...(on ? NEW_TAB_REL : [])].join(' '))
+}
+
+/** <a> settings like WindPress: URL, pick a post/page, open in new tab, remove. */
+function LinkPanel({ attrs, onChange }: { attrs: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
+  const [picking, setPicking] = element.useState(false)
+  const href = attrs.href ?? ''
+  const newTab = attrs.target === '_blank'
+  const remove = () => onChange(withNewTab(withAttr(attrs, 'href', ''), false))
+  return h(
+    components.PanelBody,
+    { title: __('Link'), initialOpen: true, className: 'ixt-panel ixt-link-panel' },
+    picking && LinkControl
+      ? h(
+          'div',
+          { className: 'ixt-link-panel__picker' },
+          h(LinkControl, {
+            value: { url: href, opensInNewTab: newTab },
+            onChange: (link: { url?: string; opensInNewTab?: boolean }) => {
+              onChange(withNewTab(withAttr(attrs, 'href', link.url ?? ''), link.opensInNewTab === true))
+              setPicking(false)
+            },
+            onRemove: () => {
+              remove()
+              setPicking(false)
+            },
+          }),
+          h(components.Button, { variant: 'secondary', onClick: () => setPicking(false), __next40pxDefaultSize: true }, __('Cancel')),
+        )
+      : h(
+          'div',
+          { className: 'ixt-link-panel__fields' },
+          h(components.TextControl, {
+            label: __('URL'),
+            value: href,
+            type: 'url',
+            placeholder: 'https://example.com',
+            className: 'ixt-mono',
+            onChange: (v: string) => onChange(withAttr(attrs, 'href', v.trim())),
+            __next40pxDefaultSize: true,
+            __nextHasNoMarginBottom: true,
+          }),
+          LinkControl ? h(components.Button, { variant: 'secondary', onClick: () => setPicking(true), __next40pxDefaultSize: true }, __('Choose from posts and pages')) : null,
+          href
+            ? h(components.ToggleControl, {
+                label: __('Open in new tab'),
+                checked: newTab,
+                onChange: (on: boolean) => onChange(withNewTab(attrs, on)),
+                __nextHasNoMarginBottom: true,
+              })
+            : null,
+          href ? h(components.Button, { variant: 'secondary', isDestructive: true, onClick: remove, __next40pxDefaultSize: true }, __('Remove link')) : null,
+        ),
+  )
+}
+
+/** <img> settings like WindPress: preview, choose/replace/remove from the Media Library, alt, size. */
+function ImagePanel({ attrs, onChange }: { attrs: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
+  const src = attrs.src ?? ''
+  const field = (name: string, label: string, extra: Record<string, unknown> = {}) =>
+    h(components.TextControl, {
+      label,
+      value: attrs[name] ?? '',
+      onChange: (v: string) => onChange(withAttr(attrs, name, v)),
+      __next40pxDefaultSize: true,
+      __nextHasNoMarginBottom: true,
+      ...extra,
+    })
+  return h(
+    components.PanelBody,
+    { title: __('Image'), initialOpen: true, className: 'ixt-panel ixt-image-panel' },
+    h(
+      blockEditor.MediaUploadCheck,
+      null,
+      h(blockEditor.MediaUpload, {
+        allowedTypes: ['image'],
+        // Picking an image takes its alt text and size from the Media Library too.
+        onSelect: (media: MediaItem) =>
+          onChange(
+            withAttr(
+              withAttr(withAttr(withAttr(attrs, 'src', media.url), 'alt', media.alt ?? ''), 'width', media.width ? String(media.width) : ''),
+              'height',
+              media.height ? String(media.height) : '',
+            ),
+          ),
+        render: ({ open }: { open: () => void }) =>
+          h(
+            'div',
+            { className: 'ixt-image-panel__media' },
+            src ? h('img', { src, alt: attrs.alt ?? '', className: 'ixt-image-panel__preview' }) : null,
+            h(components.Button, { variant: src ? 'secondary' : 'primary', onClick: open, __next40pxDefaultSize: true }, src ? __('Replace image') : __('Select image')),
+            src
+              ? h(components.Button, { variant: 'secondary', isDestructive: true, onClick: () => onChange(withAttr(attrs, 'src', '')), __next40pxDefaultSize: true }, __('Remove image'))
+              : null,
+          ),
+      }),
+    ),
+    h('div', { className: 'ixt-field' }, field('alt', __('Alt text'), { help: __('Describe the image for screen readers. Leave empty for decorative images.') })),
+    h('div', { className: 'ixt-image-panel__size' }, field('width', __('Width'), { type: 'number', min: 0 }), field('height', __('Height'), { type: 'number', min: 0 })),
+  )
+}
+
+/** "Choose from Media Library" button next to src / poster. */
+function MediaPicker({ tag, name, onSelect }: { tag: string; name: string; onSelect: (media: MediaItem) => void }) {
+  const allowedTypes = name === 'poster' ? ['image'] : MEDIA_TYPES[tag]
+  return h(
+    blockEditor.MediaUploadCheck,
+    null,
+    h(blockEditor.MediaUpload, {
+      onSelect,
+      allowedTypes,
+      render: ({ open }: { open: () => void }) =>
+        h(components.Button, { icon: 'format-image', size: 'small', label: __('Choose from Media Library'), className: 'ixt-attrs__media', onClick: open }),
+    }),
+  )
+}
+
+function AttributeRows({ tag, value, onChange }: { tag: string; value: Record<string, string>; onChange: (v: Record<string, string>) => void }) {
   // Local rows so a half-typed (empty) name doesn't vanish on the next render.
   const [rows, setRows] = element.useState<AttrRow[]>(Object.entries(value))
+  const fromRows = (list: AttrRow[]) => JSON.stringify(Object.fromEntries(list.filter(([n]) => n.trim() !== '').map(([n, v]) => [n.trim(), v])))
+  // Changed elsewhere (e.g. the Image panel): reload. Our own edits already match, so typing isn't reset.
+  element.useEffect(() => {
+    if (fromRows(rows) !== JSON.stringify(value)) setRows(Object.entries(value))
+  }, [JSON.stringify(value)])
   const commit = (next: AttrRow[]) => {
     setRows(next)
     onChange(Object.fromEntries(next.filter(([name]) => name.trim() !== '').map(([n, v]) => [n.trim(), v])))
@@ -123,14 +248,25 @@ function AttributeRows({ value, onChange }: { value: Record<string, string>; onC
           onChange: (e: { target: { value: string } }) => commit(rows.map((r, j) => (j === i ? [e.target.value, r[1]] : r))),
         }),
         h('span', { className: 'ixt-attrs__eq', 'aria-hidden': true }, '='),
-        h('input', {
-          className: 'ixt-attrs__value',
-          value: val,
-          placeholder: 'value',
-          'aria-label': __('Attribute value'),
-          spellCheck: false,
-          onChange: (e: { target: { value: string } }) => commit(rows.map((r, j) => (j === i ? [r[0], e.target.value] : r))),
-        }),
+        h(
+          'div',
+          { className: 'ixt-attrs__value-wrap' },
+          h('input', {
+            className: 'ixt-attrs__value',
+            value: val,
+            placeholder: 'value',
+            'aria-label': __('Attribute value'),
+            spellCheck: false,
+            onChange: (e: { target: { value: string } }) => commit(rows.map((r, j) => (j === i ? [r[0], e.target.value] : r))),
+          }),
+          tag !== 'img' && MEDIA_ATTRS.has(name.trim().toLowerCase())
+            ? h(MediaPicker, {
+                tag,
+                name: name.trim().toLowerCase(),
+                onSelect: (media: MediaItem) => commit(rows.map((r, j) => (j === i ? [r[0], media.url] : r))),
+              })
+            : null,
+        ),
         h(components.Button, {
           icon: 'no-alt',
           size: 'small',
@@ -188,6 +324,8 @@ function Edit({ attributes, setAttributes, isSelected, clientId }: EditProps) {
   const inspector = h(
     blockEditor.InspectorControls,
     null,
+    tag === 'img' ? h(ImagePanel, { attrs: globalAttrs, onChange: (v: Record<string, string>) => setAttributes({ globalAttrs: v }) }) : null,
+    tag === 'a' ? h(LinkPanel, { attrs: globalAttrs, onChange: (v: Record<string, string>) => setAttributes({ globalAttrs: v }) }) : null,
     h(
       components.PanelBody,
       {
@@ -233,7 +371,7 @@ function Edit({ attributes, setAttributes, isSelected, clientId }: EditProps) {
         'div',
         { className: 'ixt-field' },
         h('span', { className: 'ixt-label' }, __('Attributes')),
-        h(AttributeRows, { value: globalAttrs, onChange: (v: Record<string, string>) => setAttributes({ globalAttrs: v }) }),
+        h(AttributeRows, { tag, value: globalAttrs, onChange: (v: Record<string, string>) => setAttributes({ globalAttrs: v }) }),
       ),
     ),
   )
@@ -264,10 +402,24 @@ function Edit({ attributes, setAttributes, isSelected, clientId }: EditProps) {
   return h(element.Fragment, null, inspector, el)
 }
 
+/**
+ * Custom HTML -> Common Blocks: same markup, text editable on the canvas.
+ * Gets the whole block: since WP 7.x core/html no longer parses its markup into
+ * `attributes.content` (and widgets saved as raw HTML never had it), so fall back
+ * to the block's original markup.
+ */
+function fromHtml(block: { attributes?: { content?: string }; originalContent?: string }): unknown[] {
+  const content = block.attributes?.content || block.originalContent || ''
+  const body = new DOMParser().parseFromString(content, 'text/html').body
+  const result = createBlocks(nodesToSpecs(body.childNodes))
+  return result.length > 0 ? result : [blocks.createBlock('windpress/common-block', {}, [])]
+}
+
 blocks.registerBlockType('windpress/common-block', {
   title: __('Common Block'),
   icon: 'editor-code',
   edit: Edit,
+  transforms: { from: [{ type: 'block', blocks: ['core/html'], __experimentalConvert: fromHtml }] },
   save: ({ attributes }: { attributes: Attrs }) => (isContainer(attributes) ? h(blockEditor.InnerBlocks.Content) : null),
   __experimentalLabel: (attributes: Attrs & { metadata?: { name?: string } }, { context }: { context: string }) =>
     context === 'list-view' || context === 'breadcrumb'
