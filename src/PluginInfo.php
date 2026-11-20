@@ -12,6 +12,8 @@ namespace InsightX\Tailwind;
 final class PluginInfo
 {
     public const SLUG = 'insightx-tailwind';
+    public const TESTED_WP = '7.1.5';
+    public const REQUIRES_PHP = '7.4';
 
     public static function register_hooks(): void
     {
@@ -28,7 +30,6 @@ final class PluginInfo
         if ($action !== 'plugin_information' || !is_object($args) || ($args->slug ?? '') !== self::SLUG) {
             return $result;
         }
-        global $wp_version;
         $asset = static fn(string $file): string => add_query_arg(
             'ver',
             (string) filemtime(INSIGHTX_TAILWIND_DIR . '/assets/branding/' . $file),
@@ -42,8 +43,8 @@ final class PluginInfo
             'author'        => '<a href="https://www.insightx.in.th">InsightX</a>',
             'homepage'      => 'https://insightx.in.th/',
             'requires'      => '6.5',
-            'tested'        => (string) $wp_version,
-            'requires_php'  => '7.4',
+            'tested'        => self::TESTED_WP,
+            'requires_php'  => self::REQUIRES_PHP,
             'last_updated'  => gmdate('Y-m-d H:i:s', (int) filemtime(INSIGHTX_TAILWIND_FILE)),
             'sections'      => self::sections(),
             'banners'       => ['low' => $asset('banner.svg'), 'high' => $asset('banner.svg')],
@@ -80,6 +81,8 @@ final class PluginInfo
     {
         if (is_object($update)) {
             $update->icons = ((array) self::info(false, 'plugin_information', (object) ['slug' => self::SLUG]))['icons'];
+            $update->tested = self::TESTED_WP;
+            $update->requires_php = self::REQUIRES_PHP;
         }
         return $update;
     }
