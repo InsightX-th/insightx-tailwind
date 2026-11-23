@@ -32,7 +32,12 @@ html:not(.ixt-mirror) .editor-styles-wrapper .ixt-cb.wp-block:not(img, svg, vide
 html:not(.ixt-mirror) .editor-styles-wrapper .ixt-cb .wp-block:not(img, svg, video, picture, canvas, iframe, object) {
   max-width: none;
 }
-html:not(.ixt-mirror) .block-editor-block-list__layout .ixt-cb.block-editor-block-list__block {
+/* (0,2,0): beats core's `.block-editor-block-list__layout .block-editor-block-list__block`
+   (loaded earlier) but loses to the frontend CSS scoped into the Widgets editor
+   (`.editor-styles-wrapper .footer-hero`, `… .relative`), which isn't !important there.
+   A stronger selector forced every block static, so `absolute` layers (e.g. a ::before
+   overlay) spread over the whole widget area and swallowed clicks on the text. */
+:where(html:not(.ixt-mirror) .block-editor-block-list__layout) .ixt-cb.block-editor-block-list__block {
   position: static;
 }
 
